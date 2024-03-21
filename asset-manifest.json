@@ -1,20 +1,20 @@
 {
   "files": {
-    "main.css": "/static/css/main.0c9e003e.css",
-    "main.js": "/static/js/main.bc9584f6.js",
+    "main.css": "/static/css/main.03f7fe0e.css",
+    "main.js": "/static/js/main.b276eddb.js",
     "static/js/787.28cb0dcd.chunk.js": "/static/js/787.28cb0dcd.chunk.js",
-    "static/media/ink.mp4": "/static/media/ink.9e6d5eaac1f10b486f75.mp4",
+    "static/media/header-background.jpg": "/static/media/header-background.05591785270fcb2e03e5.jpg",
     "static/media/Kenny Ong Ker Chin - Resume.pdf": "/static/media/Kenny Ong Ker Chin - Resume.15e3a21cea20eb80264b.pdf",
     "static/media/github.svg": "/static/media/github.a662eee98204c3ad519b57e0fe2770c3.svg",
     "index.html": "/index.html",
     "static/media/email.svg": "/static/media/email.8d8ae5be6cd386ac6f5d227eba4b59fa.svg",
     "static/media/linkedin.svg": "/static/media/linkedin.a55eaf15e149acfa2d9b855ba43f9f37.svg",
-    "main.0c9e003e.css.map": "/static/css/main.0c9e003e.css.map",
-    "main.bc9584f6.js.map": "/static/js/main.bc9584f6.js.map",
+    "main.03f7fe0e.css.map": "/static/css/main.03f7fe0e.css.map",
+    "main.b276eddb.js.map": "/static/js/main.b276eddb.js.map",
     "787.28cb0dcd.chunk.js.map": "/static/js/787.28cb0dcd.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.0c9e003e.css",
-    "static/js/main.bc9584f6.js"
+    "static/css/main.03f7fe0e.css",
+    "static/js/main.b276eddb.js"
   ]
 }
