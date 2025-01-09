@@ -1,0 +1,15 @@
+body {
+    cursor: none; /* Hide the default cursor */
+  }
+  
+  .mouse-dot {
+    position: fixed;
+    width: 10px; /* Adjust the size of the dot */
+    height: 10px; /* Adjust the size of the dot */
+    background-color: rgba(255, 255, 255, 0.5); /* Adjust the color and opacity as needed */
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none; /* Ensure the dot doesn't interfere with mouse events */
+    z-index: 2; /* Ensure the dot is above other elements */
+  }
+  
