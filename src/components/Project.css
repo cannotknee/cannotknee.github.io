@@ -1,0 +1,67 @@
+.project-link {
+  text-decoration: none; /* Remove underlines from links */
+}
+
+.project-card {
+  position: relative; /* Ensure proper stacking of text and rectangle */
+  padding: 20px; /* Padding inside the card */
+  border-radius: 8px; /* Rounded corners */
+  background-color: #091a22; /* Initially, the background is transparent */
+  transition: background-color 0.5s ease; /* Smooth transition for background */
+  margin: 20px 0; /* Adjust spacing between cards */
+}
+
+.project-content {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+/* Media queries for responsiveness */
+@media screen and (max-width: 768px) {
+  .project-content {
+    flex-direction: column; /* Stack items vertically on smaller screens */
+  }
+}
+
+.project-link:hover .project-card {
+  background-color: #984B34 /* Background color on parent link hover */
+}
+
+.project-title {
+  color: #fff;
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+
+.project-description {
+  color: #fff;
+  font-size: 1rem;
+  margin-bottom: 10px;
+}
+
+.project-tech-container {
+  flex-direction: row;
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.project-tech {
+  font-size: 0.9rem;
+  color: white;
+  display: inline-block;
+  padding: 5px 10px;
+  background-color: #1C2951;
+  border: 1px solid #333;
+  border-radius: 10px;
+  margin-right: 5px; /* Adjust spacing between buttons */
+  cursor: default; /* Prevent click behavior */
+}
+
+.project-image {
+  width: 200px;
+  height: 100%;
+  border-radius: 8px;
+  margin-left: 20px;
+}
