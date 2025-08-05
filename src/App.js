@@ -1,7 +1,6 @@
 import "./App.css";
 import React, { useEffect, useState, useRef } from "react";
 import { motion, useScroll, useSpring } from "framer-motion";
-import BarChart from "./components/BarChart.js";
 import {
   Chart as ChartJS,
   BarElement,
@@ -89,133 +88,181 @@ function App() {
     };
   }, []); // Empty dependency array ensures this runs only once on component mount
 
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("animate"); // Add animation class when in view
+        }
+      });
+    }, {
+      rootMargin: "0px",
+      threshold: 0.6,
+    });
+
+    const timelineItems = document.querySelectorAll(".timeline-item");
+    timelineItems.forEach((item) => observer.observe(item));
+
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const navLinks = document.querySelectorAll(".nav-item");
+
+    const sectionObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const sectionId = entry.target.id;
+          const matchingLink = document.querySelector(
+            `.nav-item[data-section="${sectionId}"]`
+          );
+
+          if (matchingLink) {
+            if (entry.isIntersecting) {
+              navLinks.forEach((link) => link.classList.remove("active"));
+              matchingLink.classList.add("active");
+            }
+          }
+        });
+      },
+      {
+        threshold: 0.6, // Adjust based on when you'd like the nav to highlight
+      }
+    );
+
+    const sections = document.querySelectorAll("section, .container[id]");
+    sections.forEach((section) => sectionObserver.observe(section));
+
+    return () => sectionObserver.disconnect();
+  }, []);
+
   return (
     <div className="App">
       <motion.div className="progress-bar" style={{ scaleX }} />
       <MouseDot />
       <MouseGlow />
-      <nav>
+      <nav className={`nav nav-bar ${animationStep >= 3 ? "active" : ""}`}>
         <ul>
-          <li>
-            <a href="#home" className="nav-item">
-              Home
-            </a>
-          </li>
-          <li>
-            <a href="#about" className="nav-item">
-              About
-            </a>
-          </li>
-          <li>
-            <a href="#experience" className="nav-item">
-              Experience
-            </a>
-          </li>
-          <li>
-            <a href="#projects" className="nav-item">
-              Projects
-            </a>
-          </li>
-          <li>
-            <a href="#contact" className="nav-item">
-              Contact
-            </a>
-          </li>
+          <li><a href="#home" className="nav-item" data-section="home">Home</a></li>
+          <li><a href="#about" className="nav-item" data-section="about">About</a></li>
+          <li><a href="#experience" className="nav-item" data-section="experience">Experience</a></li>
+          <li><a href="#projects" className="nav-item" data-section="projects">Projects</a></li>
+          <li><a href="#contact" className="nav-item" data-section="contact">Contact</a></li>
         </ul>
       </nav>
-      <header className="page-header" role="banner" id="home">
+
+      <section className="page-header" role="banner" id="home">
         <div className="intro">
           <h1 className={`project-name ${animationStep >= 1 ? "active" : ""}`}>
-            Hello,
+            Hello, I am
           </h1>
-          <h1 className={`project-name ${animationStep >= 2 ? "active" : ""}`}>
-            My name is
-            <span className={`highlight ${animationStep >= 3 ? "active" : ""}`}>
-              Kenny Ong
-            </span>
-          </h1>
+          <span className={`highlight ${animationStep >= 2 ? "active" : ""}`}>
+            Kenny
+          </span>
           <h1
-            className={`project-tagline ${animationStep >= 4 ? "active" : ""}`}
+            className={`project-tagline ${animationStep >= 3 ? "active" : ""}`}
           >
             A Full Stack Web Developer
           </h1>
           <motion.a
-            initial={{ opacity: 0, y: 20 }} // Initial animation properties
-            animate={{ opacity: 1, y: 0 }} // Animation properties when button is visible
-            transition={{ delay: 6 }} // Delay before animation starts
-            whileHover={{ scale: 1.2 }} // Animation properties on hover
-            whileTap={{ scale: 0.6 }} // Animation properties when button is tapped
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 4.5 }}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
             href="#about"
-            className={`btn`}
+            className="btn"
+            data-text="View my work"
           >
             View my work
           </motion.a>
+
         </div>
-      </header>
+      </section>
       <main id="content" className="main-content" role="main">
         <style type="text/css" media="screen"></style>
-        <div className="container" id="about">
-          <h2>ABOUT</h2>
-          <p>
-            I'm a software engineer at HCLTech. With a strong passion for creating intuitive
-            and dynamic user experiences, I strive to craft engaging and
-            user-centric digital solutions. I am actively seeking opportunities
-            to apply my skills and knowledge in a professional setting, where I
-            can contribute to impactful projects and continue to grow as a
-            developer.
-          </p>
-          <Canvas camera={{ position: [0, 0.1, 5] }}>
-            <ambientLight />
-            <directionalLight position={[10, 10, 10]} />
-            <Suzanne />
-          </Canvas>
-        </div>
-        <div className="container" id="skills">
-          <h2>MY SKILLS</h2>
-          <BarChart />
-        </div>
+        <section className="about-section-wrapper" id="about">
+          <motion.div
+            className="about-text"
+            initial={{ opacity: 0, x: -100 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 1, ease: "easeOut" }}
+          >
+            <h2>ABOUT</h2>
+            <p>
+              I'm a software engineer at HCLTech. With a strong passion for creating intuitive
+              and dynamic user experiences, I strive to craft engaging and
+              user-centric digital solutions. I am actively seeking opportunities
+              to apply my skills and knowledge in a professional setting, where I
+              can contribute to impactful projects and continue to grow as a
+              developer.
+            </p>
+          </motion.div>
+
+          <motion.div
+            className="about-canvas"
+            initial={{ opacity: 0, x: 100 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 1, ease: "easeOut", delay: 0.3 }}
+          >
+            <Canvas camera={{ position: [0, 0.1, 5] }}>
+              <ambientLight />
+              <directionalLight position={[10, 10, 10]} />
+              <Suzanne />
+            </Canvas>
+          </motion.div>
+        </section>
+
         <div className="container" id="experience">
           <h2>EXPERIENCE</h2>
-          <Experience
-            title="Software Engineer @ HCLTech"
-            timeline="Jul 24 – Current"
-            description="I participated in the Spark Accelerator Programme (Graduate Software Engineer 2024), a 3-month intensive training focused on development within the Microsoft Business Application Practice (MBAP). During the program, I worked on a project for a government agency, where I applied my skills in custom API development, JavaScript, Dataverse, Power BI, and plugin integration. I contributed directly to the project’s success by delivering solutions that utilized these technologies to meet the agency's needs."
-            techStack={[
-              "C#",
-              "Javascript",
-              "Typescript",
-              ".NET",
-              "PowerApps",
-              "PowerBI",
-            ]}
-            link="https://www.hcltech.com/"
-          />
-          <Experience
-            title="Systems Analyst @ Synapxe"
-            timeline="May 23 – Aug 23"
-            description="I analyzed user requirements, conducted system integration testing, and supported project management efforts. By developing automated solutions for data analysis, I provided actionable insights, empowering our organization to make informed decisions and enhance efficiency."
-            techStack={[
-              "Jira",
-              "Project management",
-              "Agile",
-              "Requirements Gathering",
-            ]}
-            link="https://www.synapxe.sg/"
-          />
-          <Experience
-            title="Software Engineer @ Zumvet"
-            timeline="Aug 22 – Dec 22"
-            description="I worked closely with a team of engineers to develop a web application enabling users to book online pet consultations and manage their pet's health. Using TypeScript, Express, and React, I enhanced the application by optimizing code and improving technical documentation. Additionally, I managed and retrieved data from the MySQL server using DBeaver, ensuring accuracy and integrity. By integrating new features for pet management and order processing, we streamlined company operations and enhanced the user experience on the website."
-            techStack={[
-              "Typescript",
-              "React",
-              "SQL",
-              "CSS/LESS",
-              "Express",
-              "Next.js",
-            ]}
-            link="https://www.zumvet.com/"
-          />
+          <div className="timeline">
+            <div className="timeline-item">
+              <Experience
+                title="Software Engineer @ HCLTech"
+                timeline="Jul 24 – Current"
+                description="I participated in the Spark Accelerator Programme (Graduate Software Engineer 2024), a 3-month intensive training focused on development within the Microsoft Business Application Practice (MBAP). During the program, I worked on a project for a government agency, where I applied my skills in custom API development, JavaScript, Dataverse, Power BI, and plugin integration. I contributed directly to the project’s success by delivering solutions that utilized these technologies to meet the agency's needs."
+                techStack={[
+                  "C#",
+                  "Javascript",
+                  "Typescript",
+                  ".NET",
+                  "PowerApps",
+                  "PowerBI",
+                ]}
+                link="https://www.hcltech.com/"
+              />
+            </div>
+            <div className="timeline-item">
+              <Experience
+                title="Systems Analyst @ Synapxe"
+                timeline="May 23 – Aug 23"
+                description="I analyzed user requirements, conducted system integration testing, and supported project management efforts. By developing automated solutions for data analysis, I provided actionable insights, empowering our organization to make informed decisions and enhance efficiency."
+                techStack={[
+                  "Jira",
+                  "Project management",
+                  "Agile",
+                  "Requirements Gathering",
+                ]}
+                link="https://www.synapxe.sg/"
+              />
+            </div>
+            <div className="timeline-item">
+              <Experience
+                title="Software Engineer @ Zumvet"
+                timeline="Aug 22 – Dec 22"
+                description="I worked closely with a team of engineers to develop a web application enabling users to book online pet consultations and manage their pet's health. Using TypeScript, Express, and React, I enhanced the application by optimizing code and improving technical documentation. Additionally, I managed and retrieved data from the MySQL server using DBeaver, ensuring accuracy and integrity. By integrating new features for pet management and order processing, we streamlined company operations and enhanced the user experience on the website."
+                techStack={[
+                  "Typescript",
+                  "React",
+                  "SQL",
+                  "CSS/LESS",
+                  "Express",
+                  "Next.js",
+                ]}
+                link="https://www.zumvet.com/"
+              />
+            </div>
+          </div>
         </div>
         <div className="container" id="projects">
           <h2>ACADEMIC PROJECTS</h2>
@@ -252,17 +299,17 @@ function App() {
           <h2>CONTACT</h2>
           <p>
             Have a question or want to work together? <br />
-            Feel free to contact me <br />
-            <button
-              className="download-button"
-              href={Resume}
-              download="Kenny Ong Ker Chin - Resume"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Download CV
-            </button>
+            Feel free to contact me
           </p>
+          <a
+            className="download-button"
+            href={Resume}
+            download="Kenny Ong Ker Chin - Resume"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Download CV
+          </a>
           <div className="site-footer-social">
             <a
               href="mailto: cankneeong@gmail.com"

@@ -1,52 +1,158 @@
+/* ===== TIMELINE WRAPPER (OUTSIDE EXPERIENCE COMPONENT) ===== */
+
+.timeline {
+  position: relative;
+  padding-left: 40px;
+  border-left: 2px solid rgba(255, 255, 255, 0.08);
+  margin-top: 40px;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 19px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, #ffffff11, #984B3433);
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 60px;
+  animation: fadeUp 1s ease forwards;
+  opacity: 0;
+  transform: translateY(40px);
+}
+
+/* Animate in when active */
+.timeline-item.animate {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: -31px;
+  top: 20px;
+  width: 16px;
+  height: 16px;
+  background: radial-gradient(circle, #ff764d, #984B34);
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  box-shadow:
+    0 0 10px #ff764d,
+    0 0 20px rgba(255, 118, 77, 0.6),
+    0 0 30px rgba(255, 118, 77, 0.4);
+  z-index: 1;
+}
+
+/* ===== EXPERIENCE COMPONENT ===== */
 .experience-link {
-    text-decoration: none; /* Remove underlines from links */
-  }
-  
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  transition: transform 0.25s ease;
+}
+
+.experience-link:hover {
+  transform: scale(1.02);
+}
+
+.experience-card {
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 16px;
+  padding: 24px 32px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+
+.experience-card:hover {
+  box-shadow:
+    0 8px 25px rgba(0, 0, 0, 0.25);
+  transform: translateY(-8px);
+}
+
+.experience-card:hover .experience-title {
+  color: #c1440e;
+  text-shadow:
+    0 0 6px rgba(193, 68, 14, 0.9),
+    0 0 12px rgba(193, 68, 14, 0.7);
+}
+
+.experience-timeline {
+  min-width: 110px;
+  font-size: 14px;
+  color: #89CFEF;
+  text-align: center;
+  user-select: none;
+  letter-spacing: 1.1px;
+  text-transform: uppercase;
+}
+
+.experience-details {
+  flex: 1;
+  color: #e0e6f3;
+  text-align: left;
+}
+
+.experience-title {
+  font-size: 1.7rem;
+  margin-bottom: 0.5rem;
+  color: #c1440e;
+  transition: color 0.4s ease, text-shadow 0.4s ease;
+}
+
+.experience-description {
+  font-size: 1rem;
+  font-weight: 400;
+  margin-bottom: 1rem;
+  line-height: 1.5;
+  color: #cbd6e6;
+}
+
+.experience-tech-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.experience-tech {
+  background: rgba(137, 207, 239, 0.2);
+  border: 1.5px solid #89CFEF;
+  color: #89CFEF;
+  border-radius: 14px;
+  padding: 6px 16px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  user-select: none;
+  transition: background 0.3s ease, color 0.3s ease;
+  cursor: default;
+}
+
+.experience-tech:hover {
+  background: #c1440e;
+  border-color: #c1440e;
+  color: #fff;
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
   .experience-card {
-    position: relative; /* Ensure proper stacking of text and rectangle */
-    padding: 20px; /* Padding inside the card */
-    border-radius: 8px; /* Rounded corners */
-    background-color: #091a22; /* Initially, the background is transparent */
-    transition: background-color 0.3s ease; /* Smooth transition for background */
-    margin: 20px 0; /* Adjust spacing between cards */
+    flex-direction: column;
+    padding: 20px;
   }
 
   .experience-timeline {
-    color: #fff;
-    font-weight: 700;
-  }
-  
-  .experience-link:hover .experience-card {
-    background-color: #984B34; /* Background color on parent link hover */
-  }
-  
-  .experience-title {
-    color: #fff;
-    font-size: 1.2rem;
+    min-width: auto;
     margin-bottom: 10px;
   }
-  
-  .experience-description {
-    color: #fff;
-    font-size: 1rem;
-    margin-bottom: 10px;
-  }
-
-  .experience-tech-container {
-    flex-direction: row;
-    width: 100%;
-    display: flex;
-    justify-content: flex-start;
-  }
-  
-  .experience-tech {
-    font-size: 0.9rem;
-    color: #fff;
-    display: inline-block;
-    padding: 5px 10px;
-    background-color: #1C2951;
-    border: 1px solid #333;
-    border-radius: 10px;
-    margin-right: 5px; /* Adjust spacing between buttons */
-    cursor: default; /* Prevent click behavior */
-  }
+}
