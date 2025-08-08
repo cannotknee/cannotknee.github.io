@@ -1,23 +1,23 @@
 {
   "files": {
-    "main.css": "/static/css/main.2a70ed75.css",
-    "main.js": "/static/js/main.85faefb3.js",
+    "main.css": "/static/css/main.f57d0c70.css",
+    "main.js": "/static/js/main.99cf558c.js",
     "static/js/453.96453769.chunk.js": "/static/js/453.96453769.chunk.js",
     "static/media/FEAST.png": "/static/media/FEAST.d28ea15982436d48cc40.png",
+    "static/media/HDB.png": "/static/media/HDB.1acf84f4b835c176cfd8.png",
+    "static/media/Monstyr.png": "/static/media/Monstyr.d5914fb1c9c27c1a8cb8.png",
     "static/media/header-background.jpg": "/static/media/header-background.05591785270fcb2e03e5.jpg",
-    "static/media/Monstyr.jpg": "/static/media/Monstyr.de9f4c63ad55063dcbc1.jpg",
     "static/media/Kenny Ong Ker Chin - Resume.pdf": "/static/media/Kenny Ong Ker Chin - Resume.15e3a21cea20eb80264b.pdf",
-    "static/media/HDB.jpg": "/static/media/HDB.1eb3a99862b1249f0c72.jpg",
     "index.html": "/index.html",
     "static/media/github.svg": "/static/media/github.a662eee98204c3ad519b57e0fe2770c3.svg",
     "static/media/email.svg": "/static/media/email.8d8ae5be6cd386ac6f5d227eba4b59fa.svg",
     "static/media/linkedin.svg": "/static/media/linkedin.a55eaf15e149acfa2d9b855ba43f9f37.svg",
-    "main.2a70ed75.css.map": "/static/css/main.2a70ed75.css.map",
-    "main.85faefb3.js.map": "/static/js/main.85faefb3.js.map",
+    "main.f57d0c70.css.map": "/static/css/main.f57d0c70.css.map",
+    "main.99cf558c.js.map": "/static/js/main.99cf558c.js.map",
     "453.96453769.chunk.js.map": "/static/js/453.96453769.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.2a70ed75.css",
-    "static/js/main.85faefb3.js"
+    "static/css/main.f57d0c70.css",
+    "static/js/main.99cf558c.js"
   ]
 }
