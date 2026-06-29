@@ -1,12 +1,13 @@
 {
   "files": {
-    "main.css": "/static/css/main.d06abed8.css",
-    "main.js": "/static/js/main.bb101ed3.js",
+    "main.css": "/static/css/main.7c41a5c2.css",
+    "main.js": "/static/js/main.638ed2ef.js",
     "static/js/453.96453769.chunk.js": "/static/js/453.96453769.chunk.js",
     "static/media/FEAST.png": "/static/media/FEAST.d28ea15982436d48cc40.png",
     "static/media/HDB.png": "/static/media/HDB.1acf84f4b835c176cfd8.png",
     "static/media/Monstyr.png": "/static/media/Monstyr.d5914fb1c9c27c1a8cb8.png",
-    "static/media/Kenny Ong Ker Chin - Resume.pdf": "/static/media/Kenny Ong Ker Chin - Resume.15e3a21cea20eb80264b.pdf",
+    "static/media/JapaneseTutor.png": "/static/media/JapaneseTutor.24acbaef32841a11a1c2.png",
+    "static/media/Kenny Ong Ker Chin - Resume.pdf": "/static/media/Kenny Ong Ker Chin - Resume.a20cfa6a6c33540cf350.pdf",
     "static/media/git.png": "/static/media/git.3092b5991e8accb9e7c3.png",
     "static/media/react.png": "/static/media/react.cb15bfce2a9004ce61c5.png",
     "static/media/express.png": "/static/media/express.1eca086d2a78b4be3dd1.png",
@@ -14,12 +15,12 @@
     "static/media/github.svg": "/static/media/github.a662eee98204c3ad519b57e0fe2770c3.svg",
     "static/media/email.svg": "/static/media/email.8d8ae5be6cd386ac6f5d227eba4b59fa.svg",
     "static/media/linkedin.svg": "/static/media/linkedin.a55eaf15e149acfa2d9b855ba43f9f37.svg",
-    "main.d06abed8.css.map": "/static/css/main.d06abed8.css.map",
-    "main.bb101ed3.js.map": "/static/js/main.bb101ed3.js.map",
+    "main.7c41a5c2.css.map": "/static/css/main.7c41a5c2.css.map",
+    "main.638ed2ef.js.map": "/static/js/main.638ed2ef.js.map",
     "453.96453769.chunk.js.map": "/static/js/453.96453769.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.d06abed8.css",
-    "static/js/main.bb101ed3.js"
+    "static/css/main.7c41a5c2.css",
+    "static/js/main.638ed2ef.js"
   ]
 }
