@@ -1,15 +1,45 @@
 .mouse-glow {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 50px; /* Adjust the width as needed */
-    height: 50px; /* Adjust the height as needed */
-    border-radius: 50%;
-    background-color: rgba(255, 255, 255, 0.2); /* Adjust the color and opacity as needed */
-    box-shadow: 0 0 50px 20px rgba(255, 255, 255, 0.5); /* Adjust the shadow color and intensity as needed */
-    pointer-events: none;
-    z-index: 2; /* Make sure the glow is above other elements */
-    transition: transform 0.2s ease-out, width 0.2s ease-out, height 0.2s ease-out, box-shadow 0.2s ease-out;
+  position: fixed;
+  width: 28px;
+  height: 28px;
+  background: radial-gradient(circle, rgba(0, 210, 200, 0.3) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 1000;
+  box-shadow: 0 0 30px 12px rgba(0, 210, 200, 0.18);
+  transition: box-shadow 0.2s ease-out;
+}
+
+.mouse-click-effect {
+  position: fixed;
+  width: 36px;
+  height: 36px;
+  border: 1.5px solid rgba(0, 210, 200, 0.7);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0.5);
+  pointer-events: none;
+  z-index: 1000;
+  animation: click-pulse 0.55s ease-out forwards;
+}
+
+@keyframes click-pulse {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0.5);
   }
-  
+  70% {
+    opacity: 0.5;
+    transform: translate(-50%, -50%) scale(1.7);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(2);
+  }
+}
+
+@media (max-width: 768px) {
+  .mouse-glow,
+  .mouse-click-effect {
+    display: none;
+  }
+}

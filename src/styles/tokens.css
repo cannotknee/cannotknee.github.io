@@ -1,0 +1,62 @@
+:root {
+  /* ===== Colors ===== */
+  --bg-base:          #040c10;
+  --bg-surface:       rgba(255, 255, 255, 0.03);
+  --bg-hover:         rgba(255, 255, 255, 0.055);
+  --border:           rgba(255, 255, 255, 0.07);
+  --border-accent:    rgba(0, 210, 200, 0.28);
+
+  --accent:           #00d2c8;
+  --accent-dim:       rgba(0, 210, 200, 0.1);
+  --accent-glow-sm:   rgba(0, 210, 200, 0.35);
+  --accent-glow-md:   rgba(0, 210, 200, 0.2);
+
+  --text-primary:     #e8f0f8;
+  --text-secondary:   #7a93a8;
+  --text-muted:       #3a4d5c;
+
+  /* ===== Typography ===== */
+  --font-display: 'Syne', system-ui, sans-serif;
+  --font-body:    'Inter', system-ui, sans-serif;
+
+  /* ===== Type Scale ===== */
+  --text-xs:   0.75rem;
+  --text-sm:   0.875rem;
+  --text-base: 1rem;
+  --text-lg:   1.125rem;
+  --text-xl:   1.25rem;
+  --text-2xl:  1.5rem;
+  --text-3xl:  2rem;
+
+  /* ===== Spacing (8px base) ===== */
+  --s1:  4px;
+  --s2:  8px;
+  --s3:  12px;
+  --s4:  16px;
+  --s5:  24px;
+  --s6:  32px;
+  --s7:  48px;
+  --s8:  64px;
+  --s9:  96px;
+  --s10: 128px;
+
+  /* ===== Layout ===== */
+  --max-width:  1100px;
+  --nav-height: 68px;
+
+  /* ===== Border Radius ===== */
+  --radius-sm:   6px;
+  --radius-md:   10px;
+  --radius-lg:   16px;
+  --radius-full: 9999px;
+
+  /* ===== Glows ===== */
+  --glow-sm: 0 0 10px var(--accent-glow-sm);
+  --glow-md: 0 0 16px var(--accent-glow-sm), 0 0 32px var(--accent-glow-md);
+  --glow-lg: 0 0 20px var(--accent-glow-sm), 0 0 40px var(--accent-glow-md), 0 0 60px rgba(0, 210, 200, 0.1);
+
+  /* ===== Transitions ===== */
+  --t-fast: 0.15s ease;
+  --t-base: 0.3s ease;
+  --t-slow: 0.5s ease;
+}

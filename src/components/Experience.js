@@ -6,17 +6,18 @@ function Experience({ title, description, techStack, link, timeline }) {
   return (
     <a href={link} className="experience-link" target="_blank" rel="noopener noreferrer">
       <div className="experience-card">
+        <span className="diagonal-arrow">↗</span>
         <div className="experience-timeline">{timeline}</div>
         <div className="experience-details">
           <h3 className="experience-title">{title}</h3>
           <p className="experience-description">{description}</p>
           <div className="experience-tech-container">
-          {techStack.map((tech, index) => (
-            <button key={index} className="experience-tech">
-              {tech}
-            </button>
-          ))}
-        </div>
+            {techStack.map((tech, index) => (
+              <span key={index} className="experience-tech">
+                {tech}
+              </span>
+            ))}
+          </div>
         </div>
       </div>
     </a>
