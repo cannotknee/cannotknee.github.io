@@ -1,7 +1,8 @@
 import "./App.css";
-import React, { Suspense, useEffect, useState } from "react";
+import React, { Suspense, useEffect, useRef, useState } from "react";
 import { motion, useScroll, useSpring, useTransform } from "framer-motion";
 import Project from "./components/Project";
+import SectionHeader from "./components/SectionHeader";
 import MouseGlow from "./components/MouseGlow.js";
 import { ReactComponent as GitHubIcon } from "./assets/github.svg";
 import { ReactComponent as LinkedInIcon } from "./assets/linkedin.svg";
@@ -27,6 +28,7 @@ import ShootingStars from "./components/ShootingStars";
 import HeroAurora from "./components/HeroAurora";
 import ParallaxStars from "./components/ParallaxStars";
 import Parallax from "./components/Parallax";
+import ScrollAurora from "./components/ScrollAurora";
 
 import { Canvas } from "@react-three/fiber";
 import { CameraControls } from "@react-three/drei";
@@ -93,6 +95,15 @@ function App() {
   const heroTextY = useTransform(smoothScroll, [0, 0.32], [0, -90]);
   const heroSceneY = useTransform(smoothScroll, [0, 0.32], [0, -160]);
 
+  // Vertical timeline line draws in as a pure function of scroll progress
+  // through the timeline's own bounds — scrubs both ways with scroll.
+  const timelineRef = useRef(null);
+  const { scrollYProgress: timelineProgress } = useScroll({
+    target: timelineRef,
+    offset: ["start 80%", "end 60%"],
+  });
+  const timelineLineScale = useTransform(timelineProgress, [0, 1], [0, 1]);
+
   useEffect(() => {
     if (animationStep >= 4) return;
     const timer = setTimeout(() => {
@@ -101,50 +112,31 @@ function App() {
     return () => clearTimeout(timer);
   }, [animationStep]);
 
+  // The two hero <Canvas> scenes (ParallaxStars, Spaceman) are React Three
+  // Fiber WebGL contexts that default to frameloop="always" — they render
+  // every animation frame forever, even fully scrolled out of view. Two
+  // continuous WebGL render loops running underneath the whole rest of the
+  // page was starving the main thread (measured ~15fps at idle, scrolled
+  // all the way to Projects, zero interaction) and is what made every
+  // cursor-driven effect look jerky, not any particular effect's own math.
+  // Unmount them entirely — not just visually hide — once the hero scrolls
+  // out of view so R3F tears down the WebGL context and its render loop.
+  const heroRef = useRef(null);
+  const [heroInView, setHeroInView] = useState(true);
   useEffect(() => {
+    const el = heroRef.current;
+    if (!el) return undefined;
     const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("active");
-          } else {
-            entry.target.classList.remove("active");
-          }
-        });
-      },
-      { rootMargin: "0px", threshold: 0.1 }
+      ([entry]) => setHeroInView(entry.isIntersecting),
+      { rootMargin: "200px 0px" }
     );
-
-    document
-      .querySelectorAll(".container")
-      .forEach((el) => observer.observe(el));
-
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("animate");
-          } else {
-            entry.target.classList.remove("animate");
-          }
-        });
-      },
-      { rootMargin: "0px", threshold: 0.4 }
-    );
-
-    document
-      .querySelectorAll(".timeline-item")
-      .forEach((el) => observer.observe(el));
-
+    observer.observe(el);
     return () => observer.disconnect();
   }, []);
 
   return (
     <div className="App">
+      <ScrollAurora progress={scrollYProgress} />
       <ShootingStars />
       <motion.div className="progress-bar" style={{ scaleX }} />
       <MouseDot />
@@ -158,11 +150,13 @@ function App() {
         ↑
       </button>
 
-      <section className="page-header" role="banner" id="home">
+      <section className="page-header" role="banner" id="home" ref={heroRef}>
         <div className="hero-canvas" aria-hidden="true">
-          <Canvas camera={{ position: [0, 0, 1], fov: 60 }} gl={{ alpha: true }}>
-            <ParallaxStars />
-          </Canvas>
+          {heroInView && (
+            <Canvas camera={{ position: [0, 0, 1], fov: 60 }} gl={{ alpha: true }}>
+              <ParallaxStars />
+            </Canvas>
+          )}
         </div>
         <HeroAurora />
 
@@ -206,12 +200,14 @@ function App() {
           >
             <div className="orbit-scene">
               <Suspense fallback={null}>
-                <Canvas camera={{ position: [0, 0, 0.48] }}>
-                  <Spaceman />
-                  <ambientLight />
-                  <directionalLight position={[10, 10, 10]} />
-                  <CameraControls />
-                </Canvas>
+                {heroInView && (
+                  <Canvas camera={{ position: [0, 0, 0.48] }}>
+                    <Spaceman />
+                    <ambientLight />
+                    <directionalLight position={[10, 10, 10]} />
+                    <CameraControls />
+                  </Canvas>
+                )}
               </Suspense>
             </div>
           </motion.div>
@@ -229,12 +225,9 @@ function App() {
 
       <main id="content" className="main-content" role="main">
         <section className="about-wrapper" id="about">
-          <Parallax speed={90} fade fromX={-60} className="about-text-parallax">
+          <Parallax speed={90} fade fromX={-180} className="about-text-parallax">
             <div className="about-text">
-              <div className="section-header">
-                <span className="section-number">01</span>
-                <h2>About</h2>
-              </div>
+              <SectionHeader number="01" title="About" underlineOnly />
               <p>
                 I'm a software engineer who uses AI to move faster without cutting corners — at every stage, from research to review. Speed matters to me, but so does getting it right; I treat AI as the tool that compounds both.
               </p>
@@ -244,7 +237,7 @@ function App() {
             </div>
           </Parallax>
 
-          <Parallax speed={90} fade fromX={60} className="about-skills-orbit-parallax">
+          <Parallax speed={90} fade fromX={180} className="about-skills-orbit-parallax">
             <div className="about-skills-orbit" aria-hidden="true">
               <div className="orbit-ring">
                 {TECH_ICONS.map(({ icon, label }, i) => (
@@ -264,12 +257,13 @@ function App() {
         </section>
 
         <section className="container" id="experience">
-          <div className="section-header">
-            <span className="section-number">02</span>
-            <h2>Experience</h2>
-          </div>
-          <div className="timeline">
-            <Parallax speed={34}>
+          <SectionHeader number="02" title="Experience" />
+          <div className="timeline" ref={timelineRef}>
+            <motion.div
+              className="timeline-line"
+              style={{ scaleY: timelineLineScale }}
+            />
+            <Parallax speed={34} fade>
               <div className="timeline-item">
                 <Experience
                   title="Software Engineer @ HCLTech"
@@ -280,7 +274,7 @@ function App() {
                 />
               </div>
             </Parallax>
-            <Parallax speed={34}>
+            <Parallax speed={34} fade>
               <div className="timeline-item">
                 <Experience
                   title="Systems Analyst @ Synapxe"
@@ -291,7 +285,7 @@ function App() {
                 />
               </div>
             </Parallax>
-            <Parallax speed={34}>
+            <Parallax speed={34} fade>
               <div className="timeline-item">
                 <Experience
                   title="Software Engineer @ Zumvet"
@@ -306,44 +300,40 @@ function App() {
         </section>
 
         <section className="project-wrapper" id="projects">
-          <div className="section-header">
-            <span className="section-number">03</span>
-            <h2>Projects</h2>
-          </div>
+          <SectionHeader number="03" title="Projects" />
           <Project projects={projects} />
         </section>
       </main>
 
       <footer className="site-footer">
         <section className="container" id="contact">
-          <div className="section-header">
-            <span className="section-number">04</span>
-            <h2>Contact</h2>
-          </div>
-          <p>
-            Open to new opportunities and interesting projects.<br />
-            Feel free to reach out.
-          </p>
-          <a
-            className="download-button"
-            href={Resume}
-            download="Kenny Ong Ker Chin - Resume"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Download Resume
-          </a>
-          <div className="site-footer-social">
-            <a href="mailto:cankneeong@gmail.com" target="_blank" rel="noreferrer">
-              <EmailIcon />
+          <SectionHeader number="04" title="Contact" />
+          <Parallax fade speed={20} className="footer-content">
+            <p>
+              Open to new opportunities and interesting projects.<br />
+              Feel free to reach out.
+            </p>
+            <a
+              className="download-button"
+              href={Resume}
+              download="Kenny Ong Ker Chin - Resume"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Download Resume
             </a>
-            <a href="https://www.linkedin.com/in/canknee/" target="_blank" rel="noreferrer">
-              <LinkedInIcon />
-            </a>
-            <a href="https://github.com/cannotknee" target="_blank" rel="noreferrer">
-              <GitHubIcon />
-            </a>
-          </div>
+            <div className="site-footer-social">
+              <a href="mailto:cankneeong@gmail.com" target="_blank" rel="noreferrer">
+                <EmailIcon />
+              </a>
+              <a href="https://www.linkedin.com/in/canknee/" target="_blank" rel="noreferrer">
+                <LinkedInIcon />
+              </a>
+              <a href="https://github.com/cannotknee" target="_blank" rel="noreferrer">
+                <GitHubIcon />
+              </a>
+            </div>
+          </Parallax>
         </section>
         <span className="site-footer-owner">
           <a href="https://www.linkedin.com/in/canknee/" target="_blank" rel="noreferrer">
