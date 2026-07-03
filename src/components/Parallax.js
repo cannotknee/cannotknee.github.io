@@ -8,7 +8,13 @@ import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion
 // slowly; scroll back up and it eases back out. `fade`/`fromX` opt into an
 // entrance (opacity + horizontal slide) on top of the ever-present vertical
 // parallax drift.
-function Parallax({ children, speed = 30, fade = false, fromX = 0, className }) {
+//
+// Deliberately no 3D rotate/perspective here: cards that also do their own
+// cursor-driven 3D tilt (see TiltCard) nest badly with an ancestor that has
+// an independently-animated `perspective` — two separately-moving 3D
+// contexts stacked on top of each other is a known GPU-compositing glitch
+// trap in Chrome. Keep 3D transforms to a single layer per widget.
+function Parallax({ children, speed = 30, fade = false, fromX = 0, delay = 0, className }) {
   const ref = useRef(null);
   const shouldReduceMotion = useReducedMotion();
   const { scrollYProgress } = useScroll({
@@ -18,8 +24,8 @@ function Parallax({ children, speed = 30, fade = false, fromX = 0, className }) 
 
   const range = shouldReduceMotion ? 0 : speed;
   const y = useTransform(scrollYProgress, [0, 1], [range, -range]);
-  const opacity = useTransform(scrollYProgress, [0, 0.25], [0, 1]);
-  const x = useTransform(scrollYProgress, [0, 0.3], [shouldReduceMotion ? 0 : fromX, 0]);
+  const opacity = useTransform(scrollYProgress, [delay, Math.min(delay + 0.25, 1)], [0, 1]);
+  const x = useTransform(scrollYProgress, [delay, Math.min(delay + 0.3, 1)], [shouldReduceMotion ? 0 : fromX, 0]);
 
   const style = fade ? { y, opacity, x } : { y };
 
@@ -35,6 +41,7 @@ Parallax.propTypes = {
   speed: PropTypes.number,
   fade: PropTypes.bool,
   fromX: PropTypes.number,
+  delay: PropTypes.number,
   className: PropTypes.string,
 };
 

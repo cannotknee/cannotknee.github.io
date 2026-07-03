@@ -17,18 +17,20 @@
 .project-card {
   position: relative;
   border-radius: var(--radius-md);
-  overflow: hidden;
   border: 1px solid var(--border);
   background: #071318;
   cursor: pointer;
+  transition: box-shadow var(--t-slow), border-color var(--t-base), transform var(--t-base);
+}
 
-  opacity: 0;
-  transform: translateY(28px);
-  transition:
-    opacity  0.6s ease var(--delay, 0s),
-    transform 0.6s ease var(--delay, 0s),
-    box-shadow var(--t-slow),
-    border-color var(--t-base);
+/* the tilt-rotated layer, nested inside the never-transformed .project-card
+   (see TiltCard.js). The rounded-corner clip lives HERE rather than on the
+   outer card: a static overflow:hidden box clipping a 3D-rotated child is a
+   known GPU-compositing flicker trap in Chrome — co-locating the clip with
+   the layer that actually rotates avoids it. */
+.project-card-inner {
+  overflow: hidden;
+  border-radius: var(--radius-md);
 }
 
 /* rotating border trace on hover */
@@ -68,18 +70,13 @@
   animation: borderTrace 3s linear infinite;
 }
 
-.project-card.active:hover::before {
+.project-card:hover::before {
   opacity: 1;
-}
-
-.project-card.active {
-  opacity: 1;
-  transform: translateY(0);
 }
 
 .project-card:hover {
-  transform: translateY(-6px);
   border-color: var(--border-accent);
+  transform: translateY(-6px);
   box-shadow:
     0 24px 64px rgba(0, 0, 0, 0.6),
     0 0 0 1px var(--border-accent);
@@ -89,6 +86,13 @@
 .project-card-media {
   position: relative;
   height: 380px;
+}
+
+.project-card-img-wrap {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  will-change: transform, filter;
 }
 
 .project-card-img {

@@ -1,7 +1,15 @@
-import React, { useEffect } from "react";
+import { useRef } from "react";
 import PropTypes from "prop-types";
+import {
+  motion,
+  useScroll,
+  useTransform,
+  useMotionTemplate,
+  useReducedMotion,
+} from "framer-motion";
 import "./Project.css";
 import Parallax from "./Parallax";
+import TiltCard from "./TiltCard";
 
 // Middle column drifts further than the outer two — a subtle masonry-style
 // parallax across the grid as the user scrolls past it.
@@ -9,38 +17,41 @@ function speedForIndex(i) {
   return i % 3 === 1 ? 60 : 30;
 }
 
-function Project({ projects }) {
-  useEffect(() => {
-    const cards = document.querySelectorAll(".project-card");
-    const observer = new IntersectionObserver(
-      (entries) =>
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("active");
-            setTimeout(() => entry.target.style.setProperty("--delay", "0s"), 900);
-            observer.unobserve(entry.target);
-          }
-        }),
-      { threshold: 0.12 }
-    );
-    cards.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
-  }, []);
+// Image starts zoomed in and soft-focused; scrolling the card through the
+// viewport pulls it into a sharp, settled frame — a scroll-scrubbed
+// depth-of-field reveal, independent of the card's own hover zoom (which
+// stays a plain CSS transition on the <img> itself).
+function ProjectCardImage({ src, alt }) {
+  const ref = useRef(null);
+  const shouldReduceMotion = useReducedMotion();
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "start 45%"],
+  });
+  const scale = useTransform(scrollYProgress, [0, 1], [shouldReduceMotion ? 1 : 1.3, 1]);
+  const blurPx = useTransform(scrollYProgress, [0, 1], [shouldReduceMotion ? 0 : 14, 0]);
+  const filter = useMotionTemplate`blur(${blurPx}px)`;
 
+  return (
+    <motion.div ref={ref} className="project-card-img-wrap" style={{ scale, filter }}>
+      <img src={src} alt={alt} className="project-card-img" />
+    </motion.div>
+  );
+}
+
+function Project({ projects }) {
   return (
     <div className="projects-grid">
       {projects.map((project, i) => (
-        <Parallax key={i} speed={speedForIndex(i)}>
-          <article
+        <Parallax key={i} speed={speedForIndex(i)} fade delay={(i % 3) * 0.08}>
+          <TiltCard
+            as="article"
             className="project-card"
-            style={{ "--delay": `${i * 0.12}s` }}
+            innerClassName="project-card-inner"
+            tiltAmount={4}
           >
             <div className="project-card-media">
-              <img
-                src={project.imageSrc}
-                alt={project.title}
-                className="project-card-img"
-              />
+              <ProjectCardImage src={project.imageSrc} alt={project.title} />
               <span className="project-card-number">0{i + 1}</span>
 
               <div className="project-card-title-bar">
@@ -67,7 +78,7 @@ function Project({ projects }) {
                 )}
               </div>
             </div>
-          </article>
+          </TiltCard>
         </Parallax>
       ))}
     </div>
