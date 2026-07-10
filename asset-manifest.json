@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/static/css/main.f04c3550.css",
-    "main.js": "/static/js/main.44dba1f5.js",
+    "main.js": "/static/js/main.534d2f84.js",
     "static/js/453.96453769.chunk.js": "/static/js/453.96453769.chunk.js",
     "static/media/FEAST.png": "/static/media/FEAST.d28ea15982436d48cc40.png",
     "static/media/HDB.png": "/static/media/HDB.1acf84f4b835c176cfd8.png",
     "static/media/Monstyr.png": "/static/media/Monstyr.d5914fb1c9c27c1a8cb8.png",
+    "static/media/Kenny Ong Ker Chin - Resume.pdf": "/static/media/Kenny Ong Ker Chin - Resume.95814f4d79b2c8fc0dc2.pdf",
     "static/media/JapaneseTutor.png": "/static/media/JapaneseTutor.24acbaef32841a11a1c2.png",
-    "static/media/Kenny Ong Ker Chin - Resume.pdf": "/static/media/Kenny Ong Ker Chin - Resume.a20cfa6a6c33540cf350.pdf",
     "static/media/ibm-plex-sans-latin-600-normal.woff2": "/static/media/ibm-plex-sans-latin-600-normal.24bc59b4b4ad02d1666d.woff2",
     "static/media/ibm-plex-sans-latin-500-normal.woff2": "/static/media/ibm-plex-sans-latin-500-normal.fcd7b8c3d12375eedc97.woff2",
     "static/media/ibm-plex-sans-latin-500-normal.woff": "/static/media/ibm-plex-sans-latin-500-normal.4b130dfcfa945eac3e54.woff",
@@ -86,11 +86,11 @@
     "static/media/email.svg": "/static/media/email.8d8ae5be6cd386ac6f5d227eba4b59fa.svg",
     "static/media/linkedin.svg": "/static/media/linkedin.a55eaf15e149acfa2d9b855ba43f9f37.svg",
     "main.f04c3550.css.map": "/static/css/main.f04c3550.css.map",
-    "main.44dba1f5.js.map": "/static/js/main.44dba1f5.js.map",
+    "main.534d2f84.js.map": "/static/js/main.534d2f84.js.map",
     "453.96453769.chunk.js.map": "/static/js/453.96453769.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.f04c3550.css",
-    "static/js/main.44dba1f5.js"
+    "static/js/main.534d2f84.js"
   ]
 }
