@@ -4,11 +4,11 @@
     top: 0;
     left: 0;
     width: 100%;
-    z-index: 3;
-    background: linear-gradient(to bottom, rgba(4, 12, 16, 0.96), rgba(4, 12, 16, 0.3));
+    z-index: 5;
+    background: linear-gradient(to bottom, rgba(5, 6, 14, 0.92), rgba(5, 6, 14, 0.25));
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    color: white;
+    color: var(--text-primary);
     border-bottom: 1px solid transparent;
     transition: transform 0.3s ease, border-color 0.3s ease;
     transform: translateY(-100%);
@@ -19,19 +19,19 @@
     border-bottom-color: var(--border);
 }
 
-/* ===== Brand ===== */
-@keyframes brandGlow {
-  0%, 100% { text-shadow: none; }
-  50%       { text-shadow: 0 0 20px rgba(0, 210, 200, 0.5); }
+/* ===== Brand — callsign, not a logo ===== */
+.brand {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
 }
 
-.brand {
-    font-family: var(--font-display);
-    font-size: 1.2rem;
-    font-weight: 700;
+.brand::before {
+    content: "KO-2026 ⁄ ";
     color: var(--accent);
-    letter-spacing: -0.01em;
-    animation: brandGlow 5s ease-in-out infinite;
 }
 
 /* ===== Nav link underline indicator ===== */
@@ -102,7 +102,7 @@
     gap: 30px;
     align-items: center;
     justify-content: center;
-    background: rgba(4, 12, 16, 0.97);
+    background: rgba(5, 6, 14, 0.97);
     backdrop-filter: blur(16px);
     opacity: 0;
     pointer-events: none;
@@ -177,9 +177,11 @@
 }
 
 .nav-links.desktop a {
-    font-family: var(--font-body);
-    font-size: var(--text-sm);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
     font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
     color: var(--text-secondary);
     text-decoration: none;
     position: relative;

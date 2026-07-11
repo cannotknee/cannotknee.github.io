@@ -1,26 +1,40 @@
+/*
+ * MISSION KO-2026 — design tokens
+ *
+ * Vintage-NASA-meets-modern: warm paper-cream text and signal-orange
+ * accents against a deep indigo void. Deliberately NOT the teal/cyan-on-
+ * navy that every dev portfolio (and every AI-generated one) defaults to —
+ * the warmth is the point. Data/labels run in mono like flight telemetry.
+ */
 :root {
   /* ===== Colors ===== */
-  --bg-base:          #040c10;
-  --bg-surface:       rgba(255, 255, 255, 0.03);
-  --bg-hover:         rgba(255, 255, 255, 0.055);
-  --border:           rgba(255, 255, 255, 0.07);
-  --border-accent:    rgba(0, 210, 200, 0.28);
+  --bg-base:          #05060e;   /* indigo void — never pure black */
+  --bg-panel:         #0b0f1e;
+  --bg-surface:       rgba(237, 230, 214, 0.035);
+  --bg-hover:         rgba(237, 230, 214, 0.07);
+  --border:           rgba(237, 230, 214, 0.12);
+  --border-strong:    rgba(237, 230, 214, 0.24);
+  --border-accent:    rgba(255, 92, 31, 0.45);
 
-  --accent:           #00d2c8;
-  --accent-dim:       rgba(0, 210, 200, 0.1);
-  --accent-glow-sm:   rgba(0, 210, 200, 0.35);
-  --accent-glow-md:   rgba(0, 210, 200, 0.2);
+  --accent:           #ff5c1f;   /* signal orange */
+  --accent-2:         #ffb03a;   /* amber — data glow, secondary */
+  --accent-dim:       rgba(255, 92, 31, 0.12);
+  --accent-glow-sm:   rgba(255, 92, 31, 0.35);
+  --accent-glow-md:   rgba(255, 176, 58, 0.22);
 
-  --text-primary:     #e8f0f8;
-  --text-secondary:   #7a93a8;
-  --text-muted:       #3a4d5c;
+  --text-primary:     #ede6d6;   /* warm paper cream */
+  --text-secondary:   #a49d8d;
+  --text-muted:       #5d5a50;
+
+  --ok:               #7dd87d;
 
   /* ===== Typography ===== */
-  --font-display: 'Syne', system-ui, sans-serif;
-  --font-body:    'Inter', system-ui, sans-serif;
+  --font-display: 'Archivo Black', 'Arial Black', system-ui, sans-serif;
+  --font-body:    'IBM Plex Sans', system-ui, sans-serif;
+  --font-mono:    'IBM Plex Mono', 'Consolas', monospace;
 
   /* ===== Type Scale ===== */
-  --text-xs:   0.75rem;
+  --text-xs:   0.72rem;
   --text-sm:   0.875rem;
   --text-base: 1rem;
   --text-lg:   1.125rem;
@@ -41,19 +55,20 @@
   --s10: 128px;
 
   /* ===== Layout ===== */
-  --max-width:  1100px;
-  --nav-height: 68px;
+  --max-width:  1200px;
+  --nav-height: 64px;
+  --hud-inset:  18px;   /* cockpit frame breathing room */
 
   /* ===== Border Radius ===== */
-  --radius-sm:   6px;
-  --radius-md:   10px;
-  --radius-lg:   16px;
+  --radius-sm:   3px;   /* tighter than before — instrument-panel, not app-UI */
+  --radius-md:   6px;
+  --radius-lg:   10px;
   --radius-full: 9999px;
 
   /* ===== Glows ===== */
   --glow-sm: 0 0 10px var(--accent-glow-sm);
   --glow-md: 0 0 16px var(--accent-glow-sm), 0 0 32px var(--accent-glow-md);
-  --glow-lg: 0 0 20px var(--accent-glow-sm), 0 0 40px var(--accent-glow-md), 0 0 60px rgba(0, 210, 200, 0.1);
+  --glow-lg: 0 0 20px var(--accent-glow-sm), 0 0 40px var(--accent-glow-md), 0 0 60px rgba(255, 92, 31, 0.1);
 
   /* ===== Transitions ===== */
   --t-fast: 0.15s ease;
