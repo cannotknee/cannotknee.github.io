@@ -1,273 +1,248 @@
-/* ===== Projects Grid ===== */
-.projects-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--s5);
-  padding: 0 var(--s6) 18vh;
+/* ===== PAYLOAD DEPLOYMENT — full-width alternating rows ===== */
+.payload-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16vh;
   max-width: var(--max-width);
   margin: 0 auto;
+  padding: 0 var(--s7) 16vh;
 }
 
-/* ===== Card Shell ===== */
-/*
- * Poster-style card: the image is the whole card. A title bar sits on
- * top by default; on hover it fades out and a blurred, scrim'd overlay
- * with the full description slides/fades in over the (also blurred) image.
- */
-.project-card {
+.payload-row {
   position: relative;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border);
-  background: #071318;
-  cursor: pointer;
-  transition: box-shadow var(--t-slow), border-color var(--t-base), transform var(--t-base);
+  display: grid;
+  grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+  gap: var(--s8);
+  align-items: center;
 }
 
-/* the tilt-rotated layer, nested inside the never-transformed .project-card
-   (see TiltCard.js). The rounded-corner clip lives HERE rather than on the
-   outer card: a static overflow:hidden box clipping a 3D-rotated child is a
-   known GPU-compositing flicker trap in Chrome — co-locating the clip with
-   the layer that actually rotates avoids it. */
-.project-card-inner {
-  overflow: hidden;
-  border-radius: var(--radius-md);
+.payload-row-flip {
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
 }
 
-/* rotating border trace on hover */
-@property --border-angle {
-  syntax: '<angle>';
-  inherits: false;
-  initial-value: 0deg;
-}
+.payload-row-flip .payload-media { order: 2; }
+.payload-row-flip .payload-body { order: 1; }
 
-@keyframes borderTrace {
-  to { --border-angle: 360deg; }
-}
-
-.project-card::before {
-  content: '';
+/* giant background index — the one oversized decorative element per row */
+.payload-index {
   position: absolute;
-  inset: 0;
-  z-index: 3;
-  border-radius: var(--radius-md);
-  background: conic-gradient(
-    from var(--border-angle),
-    transparent 0deg,
-    rgba(0, 210, 200, 0.85) 40deg,
-    transparent 80deg
-  );
-  /* mask punches out the interior, leaving only the 1.5px border strip */
-  -webkit-mask:
-    linear-gradient(#fff 0 0) content-box,
-    linear-gradient(#fff 0 0);
-  -webkit-mask-composite: destination-out;
-  mask-composite: exclude;
-  padding: 1.5px;
+  top: -0.62em;
+  right: -6px;
+  z-index: 0;
+  font-family: var(--font-display);
+  font-size: clamp(4rem, 11vw, 9rem);
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(237, 230, 214, 0.1);
   pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.4s ease;
-  /* always spinning — fades in mid-rotation so it never snaps */
-  animation: borderTrace 3s linear infinite;
+  user-select: none;
 }
 
-.project-card:hover::before {
-  opacity: 1;
+.payload-row-flip .payload-index {
+  right: auto;
+  left: -6px;
 }
 
-.project-card:hover {
-  border-color: var(--border-accent);
-  transform: translateY(-6px);
-  box-shadow:
-    0 24px 64px rgba(0, 0, 0, 0.6),
-    0 0 0 1px var(--border-accent);
-}
-
-/* ===== Media — image fills the entire card ===== */
-.project-card-media {
+/* ===== Media — porthole frame ===== */
+.payload-media {
   position: relative;
-  height: 380px;
+  z-index: 1;
 }
 
-.project-card-img-wrap {
+.payload-media-inner {
+  border-radius: var(--radius-md);
+}
+
+.payload-porthole {
+  position: relative;
+  height: clamp(260px, 32vw, 400px);
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-strong);
+  background: var(--bg-panel);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55);
+}
+
+/* corner ticks on the porthole — instrument frame, not app card */
+.payload-porthole::before,
+.payload-porthole::after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  width: 14px;
+  height: 14px;
+  border: 1px solid var(--accent);
+  pointer-events: none;
+}
+
+.payload-porthole::before {
+  top: 8px;
+  left: 8px;
+  border-right: none;
+  border-bottom: none;
+}
+
+.payload-porthole::after {
+  bottom: 8px;
+  right: 8px;
+  border-left: none;
+  border-top: none;
+}
+
+.payload-img-wrap {
   position: absolute;
   inset: 0;
-  overflow: hidden;
   will-change: transform, filter;
 }
 
-.project-card-img {
+.payload-img {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.7s ease, filter 0.5s ease;
+  transition: transform 0.7s ease;
 }
 
-.project-card:hover .project-card-img {
-  transform: scale(1.08);
-  filter: blur(6px) brightness(0.55);
+.payload-media:hover .payload-img {
+  transform: scale(1.05);
 }
 
-/* ===== Project Number Badge ===== */
-.project-card-number {
+/* one slow scanline drifting down the porthole */
+.payload-scanline {
   position: absolute;
-  top: var(--s4);
-  left: var(--s4);
-  z-index: 2;
-  font-family: var(--font-body);
-  font-size: var(--text-xs);
-  font-weight: 700;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--accent);
-  background: rgba(4, 12, 16, 0.72);
-  border: 1px solid var(--border-accent);
-  border-radius: var(--radius-sm);
-  padding: 4px 10px;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  line-height: 1;
-  opacity: 1;
-  transition: opacity 0.35s ease;
-}
-
-.project-card:hover .project-card-number {
-  opacity: 0;
-}
-
-/* ===== Title Bar — visible by default, fades out on hover ===== */
-.project-card-title-bar {
-  position: absolute;
+  z-index: 1;
   left: 0;
   right: 0;
-  bottom: 0;
+  top: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(255, 176, 58, 0.35), transparent);
+  animation: scanDrift 7s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes scanDrift {
+  from { transform: translateY(0); }
+  to   { transform: translateY(clamp(260px, 32vw, 400px)); }
+}
+
+/* ===== Body ===== */
+.payload-body {
+  position: relative;
   z-index: 1;
-  padding: var(--s7) var(--s5) var(--s5);
-  background: linear-gradient(to top, rgba(2, 8, 11, 0.92), transparent);
-  opacity: 1;
-  transition: opacity 0.35s ease;
-}
-
-.project-card:hover .project-card-title-bar {
-  opacity: 0;
-}
-
-.project-card-title {
-  font-family: var(--font-display);
-  font-size: var(--text-lg);
-  font-weight: 700;
-  color: var(--text-primary);
-  line-height: 1.25;
-  margin: 0;
-}
-
-/* ===== Hover Overlay — blurred scrim with full detail ===== */
-.project-card-overlay {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
-  gap: var(--s2);
-  padding: var(--s5);
-  background: rgba(4, 12, 16, 0.78);
-  backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(8px);
-  transition: opacity 0.4s ease, transform 0.4s ease;
+  align-items: flex-start;
 }
 
-.project-card:hover .project-card-overlay {
-  opacity: 1;
-  pointer-events: auto;
-  transform: translateY(0);
+.payload-kicker {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.26em;
+  color: var(--accent);
+  margin: 0 0 var(--s3);
 }
 
-.project-card-overlay-title {
+.payload-title {
   font-family: var(--font-display);
-  font-size: var(--text-lg);
-  font-weight: 700;
+  font-size: clamp(1.4rem, 3vw, 2.1rem);
+  text-transform: uppercase;
+  line-height: 1.12;
   color: var(--text-primary);
-  line-height: 1.25;
-  margin: 0 0 var(--s1);
+  margin: 0 0 var(--s4);
+  text-wrap: balance;
 }
 
-.project-card-desc {
+.payload-desc {
   font-size: var(--text-sm);
   color: var(--text-secondary);
-  line-height: 1.6;
-  margin: 0;
+  line-height: 1.75;
+  margin: 0 0 var(--s5);
+  max-width: 52ch;
 }
 
-/* ===== Tech Tags ===== */
-.project-card-tags {
+.payload-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--s1);
+  gap: var(--s2);
+  margin-bottom: var(--s5);
 }
 
-.project-tech {
+.payload-tech {
   display: inline-block;
-  background: rgba(0, 210, 200, 0.08);
-  border: 1px solid rgba(0, 210, 200, 0.22);
-  color: var(--accent);
-  padding: 3px 10px;
-  border-radius: var(--radius-sm);
-  font-family: var(--font-body);
-  font-size: 0.7rem;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
   font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--accent-2);
+  background: rgba(255, 176, 58, 0.07);
+  border: 1px solid rgba(255, 176, 58, 0.28);
+  border-radius: var(--radius-sm);
+  padding: 4px 10px;
   white-space: nowrap;
 }
 
-/* ===== CTA Link ===== */
-.project-card-link {
+.payload-link {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  margin-top: var(--s1);
-  font-family: var(--font-body);
+  gap: 0.4rem;
+  font-family: var(--font-mono);
   font-size: var(--text-xs);
-  font-weight: 700;
-  letter-spacing: 0.12em;
+  font-weight: 600;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: rgba(0, 210, 200, 0.75);
-  text-decoration: none;
-  transition: color var(--t-base), gap var(--t-base);
-}
-
-.project-card-link:hover {
   color: var(--accent);
-  gap: 0.55rem;
+  border-bottom: 1px solid transparent;
+  transition: color var(--t-base), gap var(--t-base), border-color var(--t-base);
 }
 
-.project-card-arrow {
+.payload-link:hover {
+  color: var(--accent-2);
+  gap: 0.65rem;
+  border-bottom-color: var(--accent-2);
+}
+
+.payload-arrow {
   display: inline-block;
   font-size: 1rem;
   line-height: 1;
   transition: transform var(--t-base);
 }
 
-.project-card-link:hover .project-card-arrow {
+.payload-link:hover .payload-arrow {
   transform: translate(3px, -3px);
 }
 
 /* ===== Responsive ===== */
 @media (max-width: 900px) {
-  .projects-grid {
-    grid-template-columns: repeat(2, 1fr);
+  .payload-list {
+    gap: 12vh;
+    padding: 0 var(--s5) 12vh;
   }
+
+  .payload-row,
+  .payload-row-flip {
+    grid-template-columns: 1fr;
+    gap: var(--s6);
+  }
+
+  .payload-row-flip .payload-media { order: 0; }
+  .payload-row-flip .payload-body { order: 1; }
+
+  .payload-index {
+    top: -0.7em;
+    right: 0;
+  }
+
+  .payload-row-flip .payload-index {
+    left: auto;
+    right: 0;
+  }
+
+  .payload-porthole { height: 240px; }
 }
 
-@media (max-width: 600px) {
-  .projects-grid {
-    grid-template-columns: 1fr;
-    padding: 0 var(--s5) var(--s8);
-  }
-
-  .project-card-media {
-    height: 260px;
-  }
+@media (prefers-reduced-motion: reduce) {
+  .payload-scanline { animation: none; opacity: 0; }
+  .payload-img { transition: none; }
 }

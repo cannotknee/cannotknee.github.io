@@ -17,6 +17,35 @@
   transform-origin: top;
 }
 
+/* Beacon travels down .timeline-line as a direct readout of scroll
+   position (top % is driven by timelineProgress in App.js) — the single
+   most literal "reactive to scroll" moment on the page. */
+.timeline-beacon {
+  position: absolute;
+  left: -3.5px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 8px 2px var(--accent-glow-sm), 0 0 20px 6px var(--accent-glow-md);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.timeline-beacon::after {
+  content: '';
+  position: absolute;
+  inset: -8px;
+  border: 1px solid var(--border-accent);
+  border-radius: 50%;
+  animation: beaconPulse 1.8s ease-out infinite;
+}
+
+@keyframes beaconPulse {
+  0%   { transform: scale(0.6); opacity: 0.9; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+
 .timeline-item {
   position: relative;
   margin-bottom: 4vh;
@@ -92,11 +121,11 @@
 }
 
 .experience-timeline {
-  min-width: 100px;
-  font-family: var(--font-body);
+  min-width: 120px;
+  font-family: var(--font-mono);
   font-size: var(--text-xs);
-  font-weight: 500;
-  letter-spacing: 0.1em;
+  font-weight: 600;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--accent);
   padding-top: 3px;
@@ -108,8 +137,10 @@
   text-align: left;
 }
 
+/* Card titles stay in the body face at 600 — Archivo Black (the display
+   face) is reserved for the hero and phase titles so it keeps its impact. */
 .experience-title {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: var(--text-xl);
   font-weight: 600;
   color: var(--text-primary);
@@ -139,15 +170,15 @@
 
 .experience-tech {
   display: inline-block;
-  background: var(--accent-dim);
-  border: 1px solid var(--border-accent);
-  color: var(--accent);
+  background: rgba(255, 176, 58, 0.07);
+  border: 1px solid rgba(255, 176, 58, 0.28);
+  color: var(--accent-2);
   border-radius: var(--radius-sm);
   padding: 4px 12px;
-  font-family: var(--font-body);
-  font-size: var(--text-xs);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
   font-weight: 500;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.08em;
   user-select: none;
 }
 
