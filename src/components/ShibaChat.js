@@ -122,8 +122,9 @@ export default function ShibaChat({ visible }) {
   }, [open]);
 
   // Keep the bubbles hanging off the dog as it flies. Direct style writes in
-  // one rAF loop, same reasoning as the HUD readouts. When the dog flies off
-  // between sections the bubbles fade with it and return when it does.
+  // one rAF loop, same reasoning as the HUD readouts. Once the dog docks in
+  // the corner there's no room to its right, so the panel opens to its left.
+  // If the dog is ever too small to see, the bubbles fade with it.
   useEffect(() => {
     if (!open && !teaser) return;
     let raf;

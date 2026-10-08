@@ -109,7 +109,8 @@
 .hud-rtb {
   position: absolute;
   bottom: calc(var(--hud-inset) + 4px);
-  right: calc(var(--hud-inset) + 8px);
+  /* left of the shiba, which docks in the corner (PilotShiba DOCK_*) */
+  right: 140px;
   pointer-events: auto;
   display: flex;
   flex-direction: column;
@@ -164,7 +165,7 @@
 
   .hud-rtb {
     bottom: 10px;
-    right: 10px;
+    right: 140px;
   }
 }
 

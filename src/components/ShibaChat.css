@@ -363,13 +363,13 @@
   40% { opacity: 1; }
 }
 
-/* phones: dock as a bottom sheet under the dog, which flies near the top */
+/* phones: a bottom sheet, stopping short of the corner the dog docks in */
 @media (max-width: 639px) {
   .shiba-panel {
     top: auto;
     left: var(--hud-inset);
     right: var(--hud-inset);
-    bottom: var(--hud-inset);
+    bottom: 108px;
     width: auto;
     height: min(440px, calc(100vh - 200px));
   }

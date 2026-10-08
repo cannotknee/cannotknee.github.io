@@ -7,6 +7,7 @@ const shibaAnchor = {
   y: 0,
   r: 0, // approximate on-screen radius of the dog
   visible: false,
+  docked: false, // parked in the bottom-right corner
 };
 
 export default shibaAnchor;
