@@ -15,6 +15,7 @@ import Experience from "./components/Experience";
 import MouseDot from "./components/MouseDot.js";
 import NavBar from "./components/NavBar.js";
 import Hud from "./components/Hud";
+import ShibaChat from "./components/ShibaChat";
 import Parallax from "./components/Parallax";
 import SectionReveal from "./components/SectionReveal";
 
@@ -130,6 +131,7 @@ function App() {
       <MouseDot />
       <NavBar visible={bootDone} />
       <Hud visible={bootDone} />
+      <ShibaChat visible={bootDone} />
 
       <section className="page-header" role="banner" id="home">
         <div className="hero-inner">

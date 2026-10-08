@@ -38,6 +38,8 @@ const WAYPOINTS_NARROW = [
 ];
 
 const ROLL_SECONDS = 1.1;
+const BARK_SECONDS = 0.5; // two quick hops
+const CHAT_SHIFT = 0.12; // viewport fraction to dodge the open chat panel
 
 function sample(t, waypoints) {
   let i = 0;
@@ -64,6 +66,23 @@ export default function PilotShiba({ reducedMotion = false }) {
 
   useEffect(() => () => document.body.classList.remove("cursor-boop"), []);
 
+  // Shiba-GPT hooks (see ShibaChat): a little hop when it "replies", as if
+  // barking the answer, and while the chat panel is open — it covers the
+  // right column — the pilot scoots left to stay in view of its own chat.
+  const barkStart = useRef(-Infinity);
+  const chatOpen = useRef(false);
+  const chatShift = useRef(0);
+  useEffect(() => {
+    const onSpeak = () => (barkStart.current = clock.elapsedTime);
+    const onChat = (e) => (chatOpen.current = e.detail.open);
+    window.addEventListener("shiba:speak", onSpeak);
+    window.addEventListener("shiba:chat", onChat);
+    return () => {
+      window.removeEventListener("shiba:speak", onSpeak);
+      window.removeEventListener("shiba:chat", onChat);
+    };
+  }, [clock]);
+
   // Clicking the pilot is the site's one easter egg: a barrel roll, and a
   // radio reply that the HUD picks up off the window event.
   const boop = (e) => {
@@ -75,7 +94,7 @@ export default function PilotShiba({ reducedMotion = false }) {
     window.dispatchEvent(new CustomEvent("shiba:boop", { detail: { count: boops.current } }));
   };
 
-  useFrame((state) => {
+  useFrame((state, delta) => {
     const g = groupRef.current;
     if (!g) return;
     const t = reducedMotion ? 0 : telemetry.progress;
@@ -84,10 +103,15 @@ export default function PilotShiba({ reducedMotion = false }) {
 
     const p = Math.min((state.clock.elapsedTime - rollStart.current) / ROLL_SECONDS, 1);
     const rolling = p < 1;
-    const hop = rolling ? Math.sin(p * Math.PI) * 0.35 : 0;
+    const bark = Math.min((state.clock.elapsedTime - barkStart.current) / BARK_SECONDS, 1);
+    const barkHop = bark < 1 && !reducedMotion ? Math.abs(Math.sin(bark * Math.PI * 2)) * 0.12 : 0;
+    const hop = (rolling ? Math.sin(p * Math.PI) * 0.35 : 0) + barkHop;
     g.rotation.z = rolling ? easeInOutCubic(p) * Math.PI * 2 : 0;
 
-    g.position.set(wp.x * viewport.width, wp.y * viewport.height + bob + hop, 0);
+    const shiftTarget = chatOpen.current && viewport.aspect >= 0.75 ? CHAT_SHIFT : 0;
+    chatShift.current += (shiftTarget - chatShift.current) * Math.min(delta * 4, 1);
+
+    g.position.set((wp.x - chatShift.current) * viewport.width, wp.y * viewport.height + bob + hop, 0);
     const s = Math.max(wp.s, 0.0001) * 3.1;
     g.scale.set(s, s, s);
     g.visible = wp.s > 0.02;

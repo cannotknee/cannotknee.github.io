@@ -148,7 +148,8 @@
 /* return-to-base */
 .hud-rtb {
   position: absolute;
-  bottom: calc(var(--hud-inset) + 4px);
+  /* stacked above the Shiba-GPT launcher, which owns the corner */
+  bottom: calc(var(--hud-inset) + 60px);
   right: calc(var(--hud-inset) + 8px);
   pointer-events: auto;
   display: flex;
