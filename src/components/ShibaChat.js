@@ -12,6 +12,7 @@ const SUGGESTIONS = [
   "What does Kenny work on?",
   "Is Kenny open to new roles?",
   "Summarise his experience",
+  "Do a barrel roll",
 ];
 
 const GREETING = "Hi! I'm Shiba-GPT, Kenny's AI co-pilot. Ask me anything about him, his projects, or his work.";

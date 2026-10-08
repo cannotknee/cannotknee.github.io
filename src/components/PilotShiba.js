@@ -50,6 +50,7 @@ const RADIUS_PER_SCALE = 0.2; // on-screen radius ≈ scale × this, world units
 
 const ROLL_SECONDS = 1.1;
 const BARK_SECONDS = 0.5; // two quick hops
+const NUDGE_SECONDS = 10; // docked attention hop interval
 // Room the open chat panel needs to the dog's right (panel + gap + margin,
 // px; see ShibaChat), and the furthest the dog will scoot left to make it.
 const CHAT_ROOM_PX = 380;
@@ -98,6 +99,8 @@ export default function PilotShiba({ reducedMotion = false }) {
   const chatOpen = useRef(false);
   const chatShift = useRef(0);
   const lastT = useRef(-1);
+  const chatOpened = useRef(false);
+  const lastNudge = useRef(0);
   const { viewport, clock } = useThree();
   const [projected] = useState(() => new THREE.Vector3());
 
@@ -114,7 +117,10 @@ export default function PilotShiba({ reducedMotion = false }) {
         rollStart.current = clock.elapsedTime;
       }
     };
-    const onChat = (e) => (chatOpen.current = e.detail.open);
+    const onChat = (e) => {
+      chatOpen.current = e.detail.open;
+      if (e.detail.open) chatOpened.current = true;
+    };
     window.addEventListener("shiba:speak", onSpeak);
     window.addEventListener("shiba:roll", onRoll);
     window.addEventListener("shiba:chat", onChat);
@@ -145,6 +151,16 @@ export default function PilotShiba({ reducedMotion = false }) {
     const motionScale = Math.min(wp.s, 1);
     const bob = reducedMotion ? 0 : Math.sin(state.clock.elapsedTime * 0.8) * 0.12 * motionScale;
 
+    // Docked and still unclicked, it hops for attention every so often, like
+    // a chat launcher's badge — until the chat has been opened once.
+    const now = state.clock.elapsedTime;
+    if (wp.docked < 0.99 || chatOpened.current || reducedMotion) {
+      lastNudge.current = now;
+    } else if (now - lastNudge.current >= NUDGE_SECONDS) {
+      lastNudge.current = now;
+      barkStart.current = now;
+    }
+
     const p = Math.min((state.clock.elapsedTime - rollStart.current) / ROLL_SECONDS, 1);
     const rolling = p < 1;
     const bark = Math.min((state.clock.elapsedTime - barkStart.current) / BARK_SECONDS, 1);
@@ -153,7 +169,9 @@ export default function PilotShiba({ reducedMotion = false }) {
     g.rotation.z = rolling ? easeInOutCubic(p) * Math.PI * 2 : reducedMotion ? 0 : wp.bank;
 
     const s = Math.max(wp.s, 0.0001) * MODEL_SCALE;
-    const radiusPx = s * RADIUS_PER_SCALE * pxPerUnit;
+    // Nominal radius → rough silhouette; shared with ShibaChat so the scoot
+    // below and the panel placement agree on how much room the dog takes.
+    const radiusPx = s * RADIUS_PER_SCALE * pxPerUnit * 1.3;
 
     // Scoot only as far left as needed for the chat panel to fit on the
     // right. Docked, the dog stays put and the panel opens beside it instead.
@@ -172,7 +190,7 @@ export default function PilotShiba({ reducedMotion = false }) {
     projected.copy(g.position).project(state.camera);
     shibaAnchor.x = ((projected.x + 1) / 2) * state.size.width;
     shibaAnchor.y = ((1 - projected.y) / 2) * state.size.height;
-    shibaAnchor.r = radiusPx * 1.3; // nominal radius → rough silhouette
+    shibaAnchor.r = radiusPx;
     shibaAnchor.visible = wp.s > 0.2;
     shibaAnchor.docked = wp.docked > 0.5;
 
