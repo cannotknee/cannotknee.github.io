@@ -69,27 +69,66 @@
   box-shadow: 0 0 8px var(--accent-glow-sm);
 }
 
-/* bottom telemetry readouts */
+/* right rail: telemetry readouts, mirroring the phase rail on the left.
+   Living in the gutter means they never sit on top of content (the old
+   bottom-centre panel covered card text as it scrolled past). */
 .hud-readouts {
   position: absolute;
-  bottom: calc(var(--hud-inset) + 6px);
-  left: 50%;
-  transform: translateX(-50%);
+  right: calc(var(--hud-inset) + 8px);
+  top: 50%;
+  transform: translateY(-50%);
   display: flex;
-  gap: 28px;
-  padding: 8px 20px;
-  background: rgba(5, 6, 14, 0.55);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  flex-direction: row; /* in vertical-rl, "row" runs top-to-bottom */
+  align-items: center;
+  gap: 22px;
+  writing-mode: vertical-rl;
 }
 
 .hud-readout {
   display: flex;
   align-items: baseline;
   gap: 8px;
-  font-size: 11px;
+  font-size: 10px;
+}
+
+/* co-pilot radio — appears for a few seconds after each boop */
+.hud-comms {
+  position: absolute;
+  bottom: calc(var(--hud-inset) + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-width: calc(100vw - 2 * var(--s8));
+  padding: 10px 18px 10px 16px;
+  background: rgba(5, 6, 14, 0.8);
+  border: 1px solid var(--border);
+  border-left: 2px solid var(--accent-2);
+  border-radius: var(--radius-sm);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  animation: commsIn 3.2s ease forwards;
+}
+
+.hud-comms-from {
+  font-size: 9px;
+  letter-spacing: 0.24em;
+  color: var(--text-muted);
+}
+
+.hud-comms-text {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--accent-2);
+}
+
+@keyframes commsIn {
+  0%   { opacity: 0; transform: translate(-50%, 10px); }
+  8%   { opacity: 1; transform: translate(-50%, 0); }
+  85%  { opacity: 1; transform: translate(-50%, 0); }
+  100% { opacity: 0; transform: translate(-50%, 0); }
 }
 
 .hud-key {
@@ -158,14 +197,14 @@
     display: none;
   }
 
+  /* no gutters on phones — the readouts would sit on the copy */
   .hud-readouts {
-    gap: 16px;
-    padding: 6px 14px;
-    bottom: 10px;
+    display: none;
   }
 
-  .hud-readout-met {
-    display: none;
+  .hud-comms {
+    bottom: 12px;
+    max-width: calc(100vw - 96px);
   }
 
   .hud-rtb {
@@ -178,5 +217,9 @@
   .hud,
   .hud-rtb {
     transition: none;
+  }
+
+  .hud-comms {
+    animation: none;
   }
 }

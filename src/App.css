@@ -9,7 +9,14 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  cursor: none !important;
+}
+
+/* The reticle (MouseDot) replaces the system cursor — but only where there
+   is a real hovering pointer to replace. */
+@media (hover: hover) and (pointer: fine) {
+  *, *::before, *::after {
+    cursor: none !important;
+  }
 }
 
 html, body, #root {
@@ -72,6 +79,13 @@ button:focus-visible {
   inset: 0;
   z-index: 0;
   pointer-events: none;
+  /* lazy-loaded after first paint — ease in rather than pop */
+  animation: journeyIn 1.2s ease both;
+}
+
+@keyframes journeyIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
 .main-content,
@@ -352,7 +366,7 @@ button:focus-visible {
 }
 
 .crew-row dt { color: var(--text-muted); }
-.crew-row dd { color: var(--text-primary); font-weight: 500; }
+.crew-row dd { color: var(--text-primary); font-weight: 500; text-align: right; }
 
 .crew-status {
   color: var(--ok) !important;
@@ -376,64 +390,6 @@ button:focus-visible {
   50%       { opacity: 0.35; }
 }
 
-/* ===== Orbiting Tech Icons ===== */
-.orbit-ring {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  animation: orbitSpin 24s linear infinite;
-}
-
-@keyframes orbitSpin {
-  to { transform: rotate(-360deg); }
-}
-
-/*
- * Icons are positioned with sin/cos so .orbit-item has no transform rotation.
- * This keeps every icon's local frame upright, so one shared counter-spin
- * animation works correctly for all 8 icons without per-angle offsets.
- */
-.orbit-item {
-  position: absolute;
-  top: calc(50% + var(--orbit-r) * sin(var(--angle)) - 26px);
-  left: calc(50% + var(--orbit-r) * cos(var(--angle)) - 26px);
-  width: 52px;
-  height: 52px;
-}
-
-.orbit-icon-inner {
-  width: 52px;
-  height: 52px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(5, 6, 14, 0.85);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  animation:
-    orbitIconCounterSpin 24s linear infinite,
-    orbitGlow 4s cubic-bezier(0.4, 0, 0.2, 1) var(--glow-delay, 0s) infinite;
-}
-
-@keyframes orbitIconCounterSpin {
-  to { transform: rotate(360deg); }
-}
-
-@keyframes orbitGlow {
-  0%, 100% { border-color: var(--border); box-shadow: none; }
-  50%       { border-color: var(--border-accent); box-shadow: 0 0 12px rgba(255, 92, 31, 0.2); }
-}
-
-.orbit-icon-img {
-  width: 34px;
-  height: 34px;
-  object-fit: contain;
-  border-radius: 2px;
-}
-
 /* ===== About Section — CREW MANIFEST ===== */
 /* Generous vh padding — stretches the section's own scroll range so the
    Parallax drift on its two columns has room to play out. */
@@ -448,14 +404,21 @@ button:focus-visible {
 }
 
 .about-text-parallax { flex: 1; }
-.about-skills-orbit-parallax { flex: 0 0 300px; }
+
+/* reserved column the shiba flies into */
+.about-copilot-seat { flex: 0 0 300px; }
 
 .about-text p { max-width: 58ch; }
 
-.about-skills-orbit {
-  --orbit-r: 140px;
-  height: 320px;
-  position: relative;
+.text-link {
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-accent);
+  transition: color var(--t-base), border-color var(--t-base);
+}
+
+.text-link:hover {
+  color: var(--accent);
+  border-color: var(--accent);
 }
 
 /* ===== Layout Container ===== */
@@ -567,8 +530,7 @@ button:focus-visible {
 /* ===== Responsive ===== */
 @media (max-width: 1024px) {
   .about-wrapper { gap: var(--s7); }
-  .about-skills-orbit-parallax { flex: 0 0 250px; }
-  .about-skills-orbit { --orbit-r: 110px; height: 268px; }
+  .about-copilot-seat { flex: 0 0 220px; }
 }
 
 @media (max-width: 768px) {
@@ -580,16 +542,12 @@ button:focus-visible {
     gap: var(--s6);
   }
 
-  .about-text-parallax,
-  .about-skills-orbit-parallax {
+  .about-text-parallax {
     flex: unset;
     width: 100%;
   }
 
-  .about-skills-orbit {
-    width: 100%;
-    height: 280px;
-  }
+  .about-copilot-seat { display: none; }
 
   .container { padding: var(--s8) var(--s5); }
 
@@ -604,8 +562,7 @@ button:focus-visible {
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
 
-  .orbit-ring,
-  .orbit-icon-inner,
+  .space-journey,
   .scroll-line,
   .crew-status::before {
     animation: none;

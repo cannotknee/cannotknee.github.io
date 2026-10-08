@@ -1,24 +1,40 @@
-/* Targeting reticle cursor — a small ring with crosshair ticks, matching the
-   cockpit HUD chrome. Replaces the old soft white dot. */
+/* Targeting reticle cursor — a small ring with a centre pip, matching the
+   cockpit HUD chrome. The outer element only carries position (written from
+   JS); the ring inside handles size and the click bounce. */
 @keyframes bounce {
-  0%   { transform: translate(-50%, -50%) scale(1); }
-  30%  { transform: translate(-50%, -50%) scale(0.72); }
-  100% { transform: translate(-50%, -50%) scale(1); }
+  0%   { scale: 1; }
+  30%  { scale: 0.72; }
+  100% { scale: 1; }
 }
 
 .mouse-dot {
   position: fixed;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.mouse-dot-live {
+  opacity: 1;
+}
+
+.mouse-dot-ring {
+  position: absolute;
+  left: -9px;
+  top: -9px;
   width: 18px;
   height: 18px;
   border: 1px solid rgba(255, 176, 58, 0.85);
   border-radius: 50%;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-  z-index: 9999;
-  transition: transform 0.1s ease;
+  transition: inset 0.2s ease, width 0.2s ease, height 0.2s ease, border-color 0.2s ease;
 }
 
-.mouse-dot::before {
+.mouse-dot-ring::before {
   content: "";
   position: absolute;
   left: 50%;
@@ -30,18 +46,45 @@
   transform: translate(-50%, -50%);
 }
 
-.mouse-dot.bounce {
+.mouse-dot.bounce .mouse-dot-ring {
   animation: bounce 0.3s ease;
 }
 
-/* Hide on touch devices */
-@media (max-width: 768px) {
+/* over the shiba: the reticle opens up and offers a boop */
+.mouse-dot-label {
+  position: absolute;
+  left: 24px;
+  top: -6px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  color: var(--accent-2);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.cursor-boop .mouse-dot-ring {
+  left: -17px;
+  top: -17px;
+  width: 34px;
+  height: 34px;
+  border-color: var(--accent-2);
+}
+
+.cursor-boop .mouse-dot-label {
+  opacity: 1;
+}
+
+/* Hide on touch-only devices */
+@media (hover: none) {
   .mouse-dot {
     display: none;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .mouse-dot { transition: none; }
-  .mouse-dot.bounce { animation: none; }
+  .mouse-dot-ring,
+  .mouse-dot-label { transition: none; }
+  .mouse-dot.bounce .mouse-dot-ring { animation: none; }
 }

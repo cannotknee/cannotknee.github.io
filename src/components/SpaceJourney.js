@@ -12,6 +12,9 @@ import telemetry, { startTelemetry } from "../lib/flightTelemetry";
 // nebula recolors through mission phases, the ringed planet slides past as
 // a landmark, and the shiba pilot travels waypoints from launch to landing.
 //
+// App lazy-loads this module, so three.js and the GLB arrive after the hero
+// text has already painted; the canvas fades in once it mounts.
+//
 // One persistent canvas (points + lines + two small shaders + one GLB) is
 // deliberately cheaper than the old setup of two hero-only canvases that had
 // to be unmounted via IntersectionObserver to stop them starving the main
@@ -57,7 +60,12 @@ export default function SpaceJourney() {
 
   return (
     <div className="space-journey" aria-hidden="true">
+      {/* The canvas itself never takes pointer events (the page sits on top
+          of it); R3F listens on #root instead, so the shiba is still
+          clickable through the content layer. */}
       <Canvas
+        eventSource={document.getElementById("root")}
+        eventPrefix="client"
         camera={{ position: [0, 0, 6], fov: 55 }}
         dpr={[1, 1.75]}
         gl={{ alpha: true, antialias: true, powerPreference: "high-performance" }}

@@ -1,34 +1,42 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import './MouseDot.css';
 
+// Reticle cursor. Position is written straight to the element's transform —
+// routing every mousemove through React state re-rendered the component at
+// pointer-event rate for nothing. Hidden until the first real mouse move so
+// it never sits parked in the top-left corner, and never shown for touch.
 const MouseDot = () => {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [isClicked, setIsClicked] = useState(false);
+  const ref = useRef(null);
 
   useEffect(() => {
-    const updateMousePosition = (e) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
+    const el = ref.current;
+    const onMove = (e) => {
+      if (e.pointerType === 'touch') return;
+      el.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+      el.classList.add('mouse-dot-live');
+    };
+    const onLeave = () => el.classList.remove('mouse-dot-live');
+    const onDown = () => {
+      el.classList.remove('bounce');
+      void el.offsetWidth; // restart the animation on rapid clicks
+      el.classList.add('bounce');
     };
 
-    const handleClick = () => {
-      setIsClicked(true);
-      setTimeout(() => setIsClicked(false), 300); // duration of bounce animation
-    };
-
-    window.addEventListener('mousemove', updateMousePosition);
-    window.addEventListener('click', handleClick);
-
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerdown', onDown);
+    document.documentElement.addEventListener('mouseleave', onLeave);
     return () => {
-      window.removeEventListener('mousemove', updateMousePosition);
-      window.removeEventListener('click', handleClick);
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerdown', onDown);
+      document.documentElement.removeEventListener('mouseleave', onLeave);
     };
   }, []);
 
   return (
-    <div
-      className={`mouse-dot ${isClicked ? 'bounce' : ''}`}
-      style={{ top: mousePosition.y, left: mousePosition.x }}
-    ></div>
+    <div ref={ref} className="mouse-dot" aria-hidden="true">
+      <span className="mouse-dot-ring" />
+      <span className="mouse-dot-label">BOOP</span>
+    </div>
   );
 };
 

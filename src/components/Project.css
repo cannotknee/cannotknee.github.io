@@ -159,6 +159,7 @@
   line-height: 1.75;
   margin: 0 0 var(--s5);
   max-width: 52ch;
+  word-break: keep-all; /* don't split Japanese words like みんなの日本語 */
 }
 
 .payload-tags {

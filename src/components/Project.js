@@ -34,7 +34,7 @@ function PayloadImage({ src, alt }) {
 
   return (
     <motion.div ref={ref} className="payload-img-wrap" style={{ scale, filter }}>
-      <img src={src} alt={alt} className="payload-img" />
+      <img src={src} alt={alt} className="payload-img" loading="lazy" decoding="async" />
     </motion.div>
   );
 }

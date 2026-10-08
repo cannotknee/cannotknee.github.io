@@ -1,45 +1,29 @@
 import "./App.css";
-import React, { useEffect, useRef, useState } from "react";
+import React, { Suspense, lazy, useEffect, useRef, useState } from "react";
 import { motion, useScroll, useSpring, useTransform, useReducedMotion } from "framer-motion";
 import Project from "./components/Project";
 import SectionHeader from "./components/SectionHeader";
 import { ReactComponent as GitHubIcon } from "./assets/github.svg";
 import { ReactComponent as LinkedInIcon } from "./assets/linkedin.svg";
 import { ReactComponent as EmailIcon } from "./assets/email.svg";
-import HDB from "./assets/HDB.png";
-import FEAST from "./assets/FEAST.png";
-import Monstyr from "./assets/Monstyr.png";
-import JapaneseTutor from "./assets/JapaneseTutor.png";
-import ReactIcon from "./assets/react.png";
-import NextIcon from "./assets/next.png";
-import NodeIcon from "./assets/node.png";
-import ExpressIcon from "./assets/express.png";
-import JavaScriptIcon from "./assets/javascript.png";
-import HtmlIcon from "./assets/html.png";
-import CssIcon from "./assets/css.png";
-import GitIcon from "./assets/git.png";
+import HDB from "./assets/HDB.webp";
+import FEAST from "./assets/FEAST.webp";
+import Monstyr from "./assets/Monstyr.webp";
+import JapaneseTutor from "./assets/JapaneseTutor.webp";
 import Resume from "./assets/Kenny Ong Ker Chin - Resume.pdf";
 import Experience from "./components/Experience";
 import MouseDot from "./components/MouseDot.js";
 import NavBar from "./components/NavBar.js";
-import SpaceJourney from "./components/SpaceJourney";
 import Hud from "./components/Hud";
 import Parallax from "./components/Parallax";
 import SectionReveal from "./components/SectionReveal";
 
-const TECH_ICONS = [
-  { icon: ReactIcon, label: "React" },
-  { icon: NextIcon, label: "Next.js" },
-  { icon: NodeIcon, label: "Node.js" },
-  { icon: ExpressIcon, label: "Express" },
-  { icon: JavaScriptIcon, label: "JavaScript" },
-  { icon: HtmlIcon, label: "HTML" },
-  { icon: CssIcon, label: "CSS" },
-  { icon: GitIcon, label: "Git" },
-];
+// three.js + R3F are most of the bundle. Splitting them out lets the hero
+// text paint on the first small chunk; the starfield fades in behind it.
+const SpaceJourney = lazy(() => import("./components/SpaceJourney"));
 
 // Pre-flight check, played once on load (skippable with any input, skipped
-// entirely under reduced motion). Four lines, then the title stamps in.
+// entirely under reduced motion). Four quick lines, then the title stamps in.
 const BOOT_LINES = [
   ["KO-2026 FLIGHT SYSTEMS", "ONLINE"],
   ["TELEMETRY LINK", "ESTABLISHED"],
@@ -54,8 +38,17 @@ function App() {
       title: "Japanese Tutor",
       code: "P-01",
       description:
-        "A voice-first Japanese conversation tutor built on one rule: correct after the full sentence, never mid-utterance. Speak in Japanese, receive Claude-powered corrections with diff highlights and furigana, then keep talking. Whisper transcribes your speech; each mistake automatically seeds a spaced-repetition review queue.",
-      techStack: ["React", "TypeScript", "Node.js", "Claude AI", "Whisper STT", "Tailwind CSS"],
+        "A voice-first conversation partner I built to practise my own spoken Japanese. Say a sentence and Yoshimi, an Osaka-raised tutor persona, corrects only the mistakes worth fixing, then replies in character using just the grammar and vocabulary from the textbook lessons I've covered — kept in bounds by a local RAG pipeline over みんなの日本語. Mistakes come back later as spoken spaced-repetition reviews. Speech output and embeddings run locally, so a turn costs about a tenth of a cent.",
+      techStack: [
+        "React",
+        "TypeScript",
+        "Express",
+        "SQLite + sqlite-vec",
+        "RAG",
+        "OpenAI",
+        "VOICEVOX",
+        "FSRS",
+      ],
       link: "https://github.com/cannotknee/japanese-tutor",
       imageSrc: JapaneseTutor,
     },
@@ -93,7 +86,7 @@ function App() {
 
   useEffect(() => {
     if (bootDone) return undefined;
-    const delay = bootStep === 0 ? 500 : bootStep < BOOT_LINES.length ? 340 : 480;
+    const delay = bootStep === 0 ? 220 : bootStep < BOOT_LINES.length ? 150 : 280;
     const timer = setTimeout(() => setBootStep((s) => s + 1), delay);
     return () => clearTimeout(timer);
   }, [bootStep, bootDone]);
@@ -131,7 +124,9 @@ function App() {
 
   return (
     <div className="App">
-      <SpaceJourney />
+      <Suspense fallback={null}>
+        <SpaceJourney />
+      </Suspense>
       <MouseDot />
       <NavBar visible={bootDone} />
       <Hud visible={bootDone} />
@@ -182,15 +177,22 @@ function App() {
               <div className="about-text">
                 <SectionHeader number="PHASE 01" title="Crew Manifest" underlineOnly />
                 <p>
-                  I'm a software engineer who uses AI to move faster without cutting corners — at
-                  every stage, from research to review. Speed matters to me, but so does getting it
-                  right; I treat AI as the tool that compounds both.
+                  I'm a software engineer in Singapore. By day I build for a government client on
+                  the Microsoft stack at HCLTech; the rest of the time I'm usually building something
+                  with AI, just to see how far it goes.
                 </p>
                 <p>
-                  This site was built with Claude Code. Japanese Tutor, a voice-first language app,
-                  runs on the Claude API. I've picked up multiple stacks quickly — Rails, Java, the
-                  Microsoft stack, React — and I try to leave code that's easy to reason about
-                  wherever I land.
+                  Two of those side missions: Japanese Tutor, a voice-first conversation partner I use
+                  to practise my own Japanese, and a personal AI assistant I run on{" "}
+                  <a href="https://github.com/openclaw/openclaw" target="_blank" rel="noreferrer" className="text-link">
+                    OpenClaw
+                  </a>{" "}
+                  that handles my reminders, alerts and PC upkeep over Telegram. This site was built
+                  with Claude Code.
+                </p>
+                <p>
+                  I've picked up stacks quickly — Rails, Java, .NET, React — and I try to leave code
+                  that's easy to reason about wherever I land.
                 </p>
                 <dl className="crew-card">
                   <div className="crew-row">
@@ -206,6 +208,18 @@ function App() {
                     <dd>SINGAPORE / GMT+8</dd>
                   </div>
                   <div className="crew-row">
+                    <dt>SYSTEMS</dt>
+                    <dd>TS · C# · REACT · PYTHON</dd>
+                  </div>
+                  <div className="crew-row">
+                    <dt>LEARNING</dt>
+                    <dd lang="ja">日本語</dd>
+                  </div>
+                  <div className="crew-row">
+                    <dt>CO-PILOT</dt>
+                    <dd>1 SHIBA · BOOPABLE</dd>
+                  </div>
+                  <div className="crew-row">
                     <dt>STATUS</dt>
                     <dd className="crew-status">OPEN TO MISSIONS</dd>
                   </div>
@@ -213,23 +227,9 @@ function App() {
               </div>
             </Parallax>
 
-            <Parallax speed={90} fade fromX={180} className="about-skills-orbit-parallax">
-              <div className="about-skills-orbit" aria-hidden="true">
-                <div className="orbit-ring">
-                  {TECH_ICONS.map(({ icon, label }, i) => (
-                    <div
-                      key={label}
-                      className="orbit-item"
-                      style={{ "--angle": `${i * 45}deg`, "--glow-delay": `${i * 0.5}s` }}
-                    >
-                      <div className="orbit-icon-inner">
-                        <img src={icon} alt="" className="orbit-icon-img" />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </Parallax>
+            {/* Empty on purpose: the shiba pilot flies into this seat
+                (see PilotShiba waypoints). */}
+            <div className="about-copilot-seat" aria-hidden="true" />
           </SectionReveal>
         </section>
 
