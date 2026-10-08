@@ -35,7 +35,7 @@ const MouseDot = () => {
   return (
     <div ref={ref} className="mouse-dot" aria-hidden="true">
       <span className="mouse-dot-ring" />
-      <span className="mouse-dot-label">BOOP</span>
+      <span className="mouse-dot-label">CHAT</span>
     </div>
   );
 };

@@ -219,7 +219,7 @@ function App() {
                   </div>
                   <div className="crew-row">
                     <dt>CO-PILOT</dt>
-                    <dd>1 SHIBA · BOOPABLE</dd>
+                    <dd>1 SHIBA · AI-POWERED</dd>
                   </div>
                   <div className="crew-row">
                     <dt>STATUS</dt>

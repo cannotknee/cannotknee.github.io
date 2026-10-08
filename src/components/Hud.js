@@ -19,38 +19,12 @@ const PHASES = [
   { id: "contact", label: "OPEN CHANNEL" },
 ];
 
-// Radio replies from the co-pilot, one per boop (see PilotShiba), cycling.
-const COMMS = [
-  "WOOF.",
-  "BARREL ROLL COMPLETE. AWAITING TREAT.",
-  "ALL SYSTEMS NOMINAL. BELLY RUB REQUESTED.",
-  "REQUESTING SNACK CLEARANCE.",
-  "AWOOOO — THAT MEANS HELLO.",
-  "OK THAT'S ENOUGH BOOPS. (IT IS NOT ENOUGH BOOPS.)",
-];
-
 export default function Hud({ visible }) {
   const velRef = useRef(null);
   const distRef = useRef(null);
   const metRef = useRef(null);
   const [phase, setPhase] = useState(0);
   const [showRtb, setShowRtb] = useState(false);
-  const [comms, setComms] = useState(null);
-
-  useEffect(() => {
-    let timer;
-    const onBoop = (e) => {
-      const count = e.detail.count;
-      setComms({ count, text: COMMS[(count - 1) % COMMS.length] });
-      clearTimeout(timer);
-      timer = setTimeout(() => setComms(null), 3200);
-    };
-    window.addEventListener("shiba:boop", onBoop);
-    return () => {
-      window.removeEventListener("shiba:boop", onBoop);
-      clearTimeout(timer);
-    };
-  }, []);
 
   useEffect(() => {
     startTelemetry();
@@ -131,16 +105,6 @@ export default function Hud({ visible }) {
           </span>
         </span>
       </div>
-
-      {/* keyed on count so each boop replays the slide-in */}
-      {comms && (
-        <div className="hud-comms" key={comms.count}>
-          <span className="hud-comms-from">
-            CO-PILOT ⁄ BOOP {String(comms.count).padStart(2, "0")}
-          </span>
-          <span className="hud-comms-text">{comms.text}</span>
-        </div>
-      )}
 
       <button
         className={`hud-rtb ${showRtb ? "hud-rtb-visible" : ""}`}

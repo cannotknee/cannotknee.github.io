@@ -1,7 +1,9 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
+import * as THREE from "three";
 import { Spaceman } from "./Spaceman";
 import telemetry from "../lib/flightTelemetry";
+import shibaAnchor from "../lib/shibaAnchor";
 
 // The mission pilot. Rather than living in its own hero-only canvas, the
 // shiba travels the whole page with you. Position/scale are pure functions of
@@ -39,7 +41,10 @@ const WAYPOINTS_NARROW = [
 
 const ROLL_SECONDS = 1.1;
 const BARK_SECONDS = 0.5; // two quick hops
-const CHAT_SHIFT = 0.12; // viewport fraction to dodge the open chat panel
+// Room the open chat panel needs to the dog's right (panel + gap + margin,
+// px; see ShibaChat), and the furthest the dog will scoot left to make it.
+const CHAT_ROOM_PX = 380;
+const MAX_CHAT_SHIFT = 0.25;
 
 function sample(t, waypoints) {
   let i = 0;
@@ -61,37 +66,39 @@ const easeInOutCubic = (p) => (p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2
 export default function PilotShiba({ reducedMotion = false }) {
   const groupRef = useRef(null);
   const rollStart = useRef(-Infinity);
-  const boops = useRef(0);
-  const { viewport, clock } = useThree();
-
-  useEffect(() => () => document.body.classList.remove("cursor-boop"), []);
-
-  // Shiba-GPT hooks (see ShibaChat): a little hop when it "replies", as if
-  // barking the answer, and while the chat panel is open — it covers the
-  // right column — the pilot scoots left to stay in view of its own chat.
   const barkStart = useRef(-Infinity);
   const chatOpen = useRef(false);
   const chatShift = useRef(0);
+  const { viewport, clock } = useThree();
+  const [projected] = useState(() => new THREE.Vector3());
+
+  useEffect(() => () => document.body.classList.remove("cursor-boop"), []);
+
+  // The pilot is the site's "AI assistant", Shiba-GPT (see ShibaChat), which
+  // drives it over window events: a little hop per reply, as if barking the
+  // answer; a barrel roll on request; and while the chat is open the pilot
+  // scoots left so the speech-bubble panel fits beside it.
   useEffect(() => {
     const onSpeak = () => (barkStart.current = clock.elapsedTime);
+    const onRoll = () => {
+      if (!reducedMotion && clock.elapsedTime - rollStart.current > ROLL_SECONDS) {
+        rollStart.current = clock.elapsedTime;
+      }
+    };
     const onChat = (e) => (chatOpen.current = e.detail.open);
     window.addEventListener("shiba:speak", onSpeak);
+    window.addEventListener("shiba:roll", onRoll);
     window.addEventListener("shiba:chat", onChat);
     return () => {
       window.removeEventListener("shiba:speak", onSpeak);
+      window.removeEventListener("shiba:roll", onRoll);
       window.removeEventListener("shiba:chat", onChat);
     };
-  }, [clock]);
+  }, [clock, reducedMotion]);
 
-  // Clicking the pilot is the site's one easter egg: a barrel roll, and a
-  // radio reply that the HUD picks up off the window event.
-  const boop = (e) => {
+  const onClick = (e) => {
     e.stopPropagation();
-    boops.current += 1;
-    if (!reducedMotion && clock.elapsedTime - rollStart.current > ROLL_SECONDS) {
-      rollStart.current = clock.elapsedTime;
-    }
-    window.dispatchEvent(new CustomEvent("shiba:boop", { detail: { count: boops.current } }));
+    window.dispatchEvent(new CustomEvent("shiba:boop"));
   };
 
   useFrame((state, delta) => {
@@ -108,13 +115,31 @@ export default function PilotShiba({ reducedMotion = false }) {
     const hop = (rolling ? Math.sin(p * Math.PI) * 0.35 : 0) + barkHop;
     g.rotation.z = rolling ? easeInOutCubic(p) * Math.PI * 2 : 0;
 
-    const shiftTarget = chatOpen.current && viewport.aspect >= 0.75 ? CHAT_SHIFT : 0;
+    const s = Math.max(wp.s, 0.0001) * 3.1;
+    const pxPerUnit = state.size.height / viewport.height;
+    const radiusPx = s * 0.2 * pxPerUnit;
+
+    // Scoot only as far left as needed for the chat panel to fit on the right.
+    let shiftTarget = 0;
+    if (chatOpen.current && viewport.aspect >= 0.75) {
+      const overflow = (0.5 + wp.x) * state.size.width + radiusPx + CHAT_ROOM_PX - state.size.width;
+      shiftTarget = Math.min(Math.max(overflow, 0) / state.size.width, MAX_CHAT_SHIFT);
+    }
     chatShift.current += (shiftTarget - chatShift.current) * Math.min(delta * 4, 1);
 
     g.position.set((wp.x - chatShift.current) * viewport.width, wp.y * viewport.height + bob + hop, 0);
-    const s = Math.max(wp.s, 0.0001) * 3.1;
     g.scale.set(s, s, s);
     g.visible = wp.s > 0.02;
+
+    // Publish the dog's screen position for the chat bubbles.
+    projected.copy(g.position).project(state.camera);
+    shibaAnchor.x = ((projected.x + 1) / 2) * state.size.width;
+    shibaAnchor.y = ((1 - projected.y) / 2) * state.size.height;
+    shibaAnchor.r = radiusPx;
+    shibaAnchor.visible = wp.s > 0.3;
+    // Scrolling doesn't fire pointer events, so a dog that flies out from
+    // under a still cursor never gets its pointer-out.
+    if (!shibaAnchor.visible) document.body.classList.remove("cursor-boop");
   });
 
   return (
@@ -124,7 +149,7 @@ export default function PilotShiba({ reducedMotion = false }) {
           model's triangles on every pointer move. */}
       <mesh
         position={[0, 0.02, 0]}
-        onClick={boop}
+        onClick={onClick}
         onPointerOver={() => document.body.classList.add("cursor-boop")}
         onPointerOut={() => document.body.classList.remove("cursor-boop")}
       >
