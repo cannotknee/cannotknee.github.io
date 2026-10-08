@@ -19,8 +19,9 @@ scroll position, so it scrubs forward *and* backward as you scroll.
 
 - `components/SpaceJourney.js` — the fixed WebGL canvas. Lazy-loaded from `App.js`, so three.js (most of the bundle) arrives after the hero text has painted. Pointer events are sourced from `#root`, so the canvas stays `pointer-events: none` but its objects are still clickable.
 - `lib/flightTelemetry.js` — one rAF loop measuring scroll position/velocity, read by both the canvas and the HUD
-- `components/PilotShiba.js` — the co-pilot's scroll-driven waypoints, plus the easter egg: click it for a barrel roll and a radio reply in the HUD
-- `components/Hud.js` — cockpit chrome: phase rail (left), live telemetry rail (right), co-pilot comms
+- `components/PilotShiba.js` — the co-pilot's scroll-driven flight: big on the hero and beside the crew card, then a banked swoop into the bottom-right corner where it docks for the rest of the page. Publishes its screen position to `lib/shibaAnchor.js`.
+- `components/ShibaChat.js` — "Shiba-GPT", the joke: the docked shiba poses as the site's AI assistant (greeting bubble, suggested prompts, typing indicator, token streaming) and only ever answers in woofs. Click the dog to open it; its bubbles follow the dog via `shibaAnchor`, and the dog hops, barrel-rolls and makes room on cue over `shiba:*` window events.
+- `components/Hud.js` — cockpit chrome: phase rail (left), live telemetry rail (right), return-to-top
 - `components/Parallax.js`, `SectionReveal.js`, `SectionHeader.js` — scroll-scrubbed reveal primitives
 - `components/TiltCard.js` — cursor-reactive 3D tilt for the Experience and Project cards, driven by a `requestAnimationFrame` loop with time-constant smoothing (not a physics spring, which doesn't behave well when continuously retargeted by `mousemove`)
 
@@ -47,7 +48,7 @@ npm run deploy  # publish /build to GitHub Pages via gh-pages
 src/
   App.js               # page layout, content, and top-level scroll wiring
   components/          # section components, 3D scene, animation primitives
-  lib/                 # shared scroll telemetry
+  lib/                 # shared per-frame state (scroll telemetry, shiba screen anchor)
   styles/tokens.css    # colors, spacing, type scale
   assets/              # project images, resume PDF, icons
 ```

@@ -83,12 +83,12 @@ export default function ShibaChat({ visible }) {
 
   // Clicking the dog (PilotShiba) opens and closes the chat.
   useEffect(() => {
-    const onBoop = () => {
+    const onShibaClick = () => {
       setTeaser(false);
       setOpen((o) => !o);
     };
-    window.addEventListener("shiba:boop", onBoop);
-    return () => window.removeEventListener("shiba:boop", onBoop);
+    window.addEventListener("shiba:click", onShibaClick);
+    return () => window.removeEventListener("shiba:click", onShibaClick);
   }, []);
 
   // One unprompted "Hi! 👋" per session, like every real assistant.
@@ -300,7 +300,7 @@ export default function ShibaChat({ visible }) {
               ↑
             </button>
           </form>
-          <p className="shiba-disclaimer">Shiba-GPT can make mistakes. Mostly it makes woofs.</p>
+          <p className="shiba-disclaimer">AI responses may be inaccurate.</p>
         </section>
       )}
     </div>

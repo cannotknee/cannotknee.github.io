@@ -64,7 +64,7 @@
   transition: opacity 0.2s ease;
 }
 
-.cursor-boop .mouse-dot-ring {
+.cursor-chat .mouse-dot-ring {
   left: -17px;
   top: -17px;
   width: 34px;
@@ -72,7 +72,7 @@
   border-color: var(--accent-2);
 }
 
-.cursor-boop .mouse-dot-label {
+.cursor-chat .mouse-dot-label {
   opacity: 1;
 }
 

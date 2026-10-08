@@ -40,13 +40,14 @@ const WAYPOINTS_NARROW = [
 
 // Docked size (on-screen radius, px) and clearance from the viewport's
 // bottom-right edges. Hud.css moves the RTB button left to clear the dog.
-// The model's real silhouette runs ~1.35× the nominal radius (more when it
-// turns side-on to watch the cursor), hence the extra clearance.
 const DOCK_RADIUS = { wide: 36, narrow: 26 };
 const DOCK_MARGIN = 28;
-const DOCK_SILHOUETTE = 1.4;
 const MODEL_SCALE = 3.1;
-const RADIUS_PER_SCALE = 0.2; // on-screen radius ≈ scale × this, world units
+const RADIUS_PER_SCALE = 0.2; // nominal radius = scale × this, world units
+// The model's real silhouette runs ~1.35× the nominal radius (more when it
+// turns side-on to watch the cursor). Used for every clearance calculation,
+// here and — via shibaAnchor.r — in ShibaChat's bubble placement.
+const SILHOUETTE = 1.35;
 
 const ROLL_SECONDS = 1.1;
 const BARK_SECONDS = 0.5; // two quick hops
@@ -59,8 +60,8 @@ const MAX_CHAT_SHIFT = 0.25;
 // The corner dock as a regular waypoint for the current canvas size.
 function dockWaypoint(size, pxPerUnit) {
   const r = size.width < 640 ? DOCK_RADIUS.narrow : DOCK_RADIUS.wide;
-  const cx = size.width - DOCK_MARGIN - r * DOCK_SILHOUETTE;
-  const cy = size.height - DOCK_MARGIN - r * DOCK_SILHOUETTE * 1.1; // a bit taller than wide
+  const cx = size.width - DOCK_MARGIN - r * SILHOUETTE;
+  const cy = size.height - DOCK_MARGIN - r * SILHOUETTE * 1.1; // a bit taller than wide
   return {
     x: cx / size.width - 0.5,
     y: 0.5 - cy / size.height,
@@ -99,17 +100,18 @@ export default function PilotShiba({ reducedMotion = false }) {
   const chatOpen = useRef(false);
   const chatShift = useRef(0);
   const lastT = useRef(-1);
-  const chatOpened = useRef(false);
+  const chatEverOpened = useRef(false);
   const lastNudge = useRef(0);
   const { viewport, clock } = useThree();
   const [projected] = useState(() => new THREE.Vector3());
 
-  useEffect(() => () => document.body.classList.remove("cursor-boop"), []);
+  useEffect(() => () => document.body.classList.remove("cursor-chat"), []);
 
   // The pilot is the site's "AI assistant", Shiba-GPT (see ShibaChat), which
   // drives it over window events: a little hop per reply, as if barking the
   // answer; a barrel roll on request; and while the chat is open the pilot
-  // scoots left so the speech-bubble panel fits beside it.
+  // scoots left so the speech-bubble panel fits beside it. Clicks go the
+  // other way, as shiba:click.
   useEffect(() => {
     const onSpeak = () => (barkStart.current = clock.elapsedTime);
     const onRoll = () => {
@@ -119,7 +121,7 @@ export default function PilotShiba({ reducedMotion = false }) {
     };
     const onChat = (e) => {
       chatOpen.current = e.detail.open;
-      if (e.detail.open) chatOpened.current = true;
+      if (e.detail.open) chatEverOpened.current = true;
     };
     window.addEventListener("shiba:speak", onSpeak);
     window.addEventListener("shiba:roll", onRoll);
@@ -133,7 +135,7 @@ export default function PilotShiba({ reducedMotion = false }) {
 
   const onClick = (e) => {
     e.stopPropagation();
-    window.dispatchEvent(new CustomEvent("shiba:boop"));
+    window.dispatchEvent(new CustomEvent("shiba:click"));
   };
 
   useFrame((state, delta) => {
@@ -148,30 +150,28 @@ export default function PilotShiba({ reducedMotion = false }) {
 
     // Bob and hops shrink with the dog so the docked one doesn't bounce
     // half its own height.
+    const now = state.clock.elapsedTime;
     const motionScale = Math.min(wp.s, 1);
-    const bob = reducedMotion ? 0 : Math.sin(state.clock.elapsedTime * 0.8) * 0.12 * motionScale;
+    const bob = reducedMotion ? 0 : Math.sin(now * 0.8) * 0.12 * motionScale;
 
     // Docked and still unclicked, it hops for attention every so often, like
     // a chat launcher's badge — until the chat has been opened once.
-    const now = state.clock.elapsedTime;
-    if (wp.docked < 0.99 || chatOpened.current || reducedMotion) {
+    if (wp.docked < 0.99 || chatEverOpened.current || reducedMotion) {
       lastNudge.current = now;
     } else if (now - lastNudge.current >= NUDGE_SECONDS) {
       lastNudge.current = now;
       barkStart.current = now;
     }
 
-    const p = Math.min((state.clock.elapsedTime - rollStart.current) / ROLL_SECONDS, 1);
+    const p = Math.min((now - rollStart.current) / ROLL_SECONDS, 1);
     const rolling = p < 1;
-    const bark = Math.min((state.clock.elapsedTime - barkStart.current) / BARK_SECONDS, 1);
+    const bark = Math.min((now - barkStart.current) / BARK_SECONDS, 1);
     const barkHop = bark < 1 && !reducedMotion ? Math.abs(Math.sin(bark * Math.PI * 2)) * 0.12 : 0;
     const hop = ((rolling ? Math.sin(p * Math.PI) * 0.35 : 0) + barkHop) * Math.max(motionScale, 0.5);
     g.rotation.z = rolling ? easeInOutCubic(p) * Math.PI * 2 : reducedMotion ? 0 : wp.bank;
 
     const s = Math.max(wp.s, 0.0001) * MODEL_SCALE;
-    // Nominal radius → rough silhouette; shared with ShibaChat so the scoot
-    // below and the panel placement agree on how much room the dog takes.
-    const radiusPx = s * RADIUS_PER_SCALE * pxPerUnit * 1.3;
+    const radiusPx = s * RADIUS_PER_SCALE * SILHOUETTE * pxPerUnit;
 
     // Scoot only as far left as needed for the chat panel to fit on the
     // right. Docked, the dog stays put and the panel opens beside it instead.
@@ -192,7 +192,6 @@ export default function PilotShiba({ reducedMotion = false }) {
     shibaAnchor.y = ((1 - projected.y) / 2) * state.size.height;
     shibaAnchor.r = radiusPx;
     shibaAnchor.visible = wp.s > 0.2;
-    shibaAnchor.docked = wp.docked > 0.5;
 
     // Scrolling moves the dog without firing pointer events, so re-run the
     // hover test when it moves — otherwise a dog that flies out from under a
@@ -211,8 +210,8 @@ export default function PilotShiba({ reducedMotion = false }) {
       <mesh
         position={[0, 0.02, 0]}
         onClick={onClick}
-        onPointerOver={() => document.body.classList.add("cursor-boop")}
-        onPointerOut={() => document.body.classList.remove("cursor-boop")}
+        onPointerOver={() => document.body.classList.add("cursor-chat")}
+        onPointerOut={() => document.body.classList.remove("cursor-chat")}
       >
         <sphereGeometry args={[0.17, 12, 12]} />
         <meshBasicMaterial transparent opacity={0} depthWrite={false} />
