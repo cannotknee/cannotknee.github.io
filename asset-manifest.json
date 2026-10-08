@@ -1,13 +1,14 @@
 {
   "files": {
-    "main.css": "/static/css/main.f04c3550.css",
-    "main.js": "/static/js/main.44a61800.js",
-    "static/js/453.96453769.chunk.js": "/static/js/453.96453769.chunk.js",
-    "static/media/FEAST.png": "/static/media/FEAST.d28ea15982436d48cc40.png",
-    "static/media/HDB.png": "/static/media/HDB.1acf84f4b835c176cfd8.png",
-    "static/media/Monstyr.png": "/static/media/Monstyr.d5914fb1c9c27c1a8cb8.png",
+    "main.css": "/static/css/main.4094b190.css",
+    "main.js": "/static/js/main.d04060aa.js",
+    "static/js/378.3cf03589.chunk.js": "/static/js/378.3cf03589.chunk.js",
+    "static/js/809.b0044b2f.chunk.js": "/static/js/809.b0044b2f.chunk.js",
     "static/media/Kenny Ong Ker Chin - Resume.pdf": "/static/media/Kenny Ong Ker Chin - Resume.95814f4d79b2c8fc0dc2.pdf",
-    "static/media/JapaneseTutor.png": "/static/media/JapaneseTutor.24acbaef32841a11a1c2.png",
+    "static/media/HDB.webp": "/static/media/HDB.f86f3e13d448c3cca928.webp",
+    "static/media/Monstyr.webp": "/static/media/Monstyr.d58843cc2590ddb6b994.webp",
+    "static/media/FEAST.webp": "/static/media/FEAST.cb6f513107920aa355f3.webp",
+    "static/media/JapaneseTutor.webp": "/static/media/JapaneseTutor.8a82df6506c75f30f34b.webp",
     "static/media/ibm-plex-sans-latin-600-normal.woff2": "/static/media/ibm-plex-sans-latin-600-normal.24bc59b4b4ad02d1666d.woff2",
     "static/media/ibm-plex-sans-latin-500-normal.woff2": "/static/media/ibm-plex-sans-latin-500-normal.fcd7b8c3d12375eedc97.woff2",
     "static/media/ibm-plex-sans-latin-500-normal.woff": "/static/media/ibm-plex-sans-latin-500-normal.4b130dfcfa945eac3e54.woff",
@@ -19,10 +20,8 @@
     "static/media/ibm-plex-sans-latin-ext-600-normal.woff2": "/static/media/ibm-plex-sans-latin-ext-600-normal.57f2c00df3cb0b0cff43.woff2",
     "static/media/ibm-plex-sans-latin-ext-400-normal.woff2": "/static/media/ibm-plex-sans-latin-ext-400-normal.11781b13e59d30facc40.woff2",
     "static/media/ibm-plex-mono-latin-600-normal.woff2": "/static/media/ibm-plex-mono-latin-600-normal.45199eea8828315083bf.woff2",
-    "static/media/git.png": "/static/media/git.3092b5991e8accb9e7c3.png",
     "static/media/ibm-plex-sans-cyrillic-600-normal.woff2": "/static/media/ibm-plex-sans-cyrillic-600-normal.e07c188c118d4142e480.woff2",
     "static/media/ibm-plex-sans-cyrillic-500-normal.woff2": "/static/media/ibm-plex-sans-cyrillic-500-normal.aa1edf9c09d921c7710a.woff2",
-    "static/media/react.png": "/static/media/react.cb15bfce2a9004ce61c5.png",
     "static/media/ibm-plex-mono-latin-500-normal.woff2": "/static/media/ibm-plex-mono-latin-500-normal.a1fc5384545ba0657d83.woff2",
     "static/media/ibm-plex-sans-cyrillic-400-normal.woff2": "/static/media/ibm-plex-sans-cyrillic-400-normal.f55992bec61fac647a43.woff2",
     "static/media/ibm-plex-sans-latin-ext-600-normal.woff": "/static/media/ibm-plex-sans-latin-ext-600-normal.5051947b55c2e3d31cc2.woff",
@@ -51,7 +50,6 @@
     "static/media/ibm-plex-sans-greek-500-normal.woff2": "/static/media/ibm-plex-sans-greek-500-normal.b4df5194a9b00b517462.woff2",
     "static/media/ibm-plex-sans-greek-600-normal.woff2": "/static/media/ibm-plex-sans-greek-600-normal.1fb74172d11b0014a7fe.woff2",
     "static/media/ibm-plex-sans-cyrillic-ext-400-normal.woff": "/static/media/ibm-plex-sans-cyrillic-ext-400-normal.5b7e59c2b55016b43956.woff",
-    "static/media/express.png": "/static/media/express.1eca086d2a78b4be3dd1.png",
     "static/media/ibm-plex-sans-greek-400-normal.woff2": "/static/media/ibm-plex-sans-greek-400-normal.173a235dfc0f0cb815f0.woff2",
     "static/media/ibm-plex-mono-cyrillic-600-normal.woff2": "/static/media/ibm-plex-mono-cyrillic-600-normal.5c59bb543d190bd0236f.woff2",
     "static/media/ibm-plex-sans-greek-600-normal.woff": "/static/media/ibm-plex-sans-greek-600-normal.dfea56a150d465fd323a.woff",
@@ -85,12 +83,13 @@
     "static/media/github.svg": "/static/media/github.a662eee98204c3ad519b57e0fe2770c3.svg",
     "static/media/email.svg": "/static/media/email.8d8ae5be6cd386ac6f5d227eba4b59fa.svg",
     "static/media/linkedin.svg": "/static/media/linkedin.a55eaf15e149acfa2d9b855ba43f9f37.svg",
-    "main.f04c3550.css.map": "/static/css/main.f04c3550.css.map",
-    "main.44a61800.js.map": "/static/js/main.44a61800.js.map",
-    "453.96453769.chunk.js.map": "/static/js/453.96453769.chunk.js.map"
+    "main.4094b190.css.map": "/static/css/main.4094b190.css.map",
+    "main.d04060aa.js.map": "/static/js/main.d04060aa.js.map",
+    "378.3cf03589.chunk.js.map": "/static/js/378.3cf03589.chunk.js.map",
+    "809.b0044b2f.chunk.js.map": "/static/js/809.b0044b2f.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.f04c3550.css",
-    "static/js/main.44a61800.js"
+    "static/css/main.4094b190.css",
+    "static/js/main.d04060aa.js"
   ]
 }
